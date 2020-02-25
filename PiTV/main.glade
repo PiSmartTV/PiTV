@@ -146,21 +146,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
-                <property name="label" translatable="yes">Online</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Login</property>
                 <property name="visible">True</property>
@@ -175,8 +160,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRevealer" id="spinner_revealer">
-                <property name="name">spinner_revealer</property>
+              <object class="GtkRevealer" id="login_spinner_revealer">
+                <property name="name">login_spinner_revealer</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="transition_type">none</property>
@@ -195,16 +180,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRevealer" id="error_revealer">
-                <property name="name">error_revealer</property>
+              <object class="GtkRevealer" id="login_error_revealer">
+                <property name="name">login_error_revealer</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <object class="GtkLabel" id="error_label">
-                    <property name="name">error_label</property>
+                  <object class="GtkLabel" id="login_error_label">
+                    <property name="name">login_error_label</property>
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Unkown error</property>
+                    <property name="label" translatable="yes">Unknown error</property>
                     <attributes>
                       <attribute name="foreground" value="#cccc00000000"/>
                     </attributes>
@@ -337,21 +322,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
-                <property name="label" translatable="yes">Online</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">6</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Sign up</property>
                 <property name="visible">True</property>
@@ -366,6 +336,49 @@
               </packing>
             </child>
             <child>
+              <object class="GtkRevealer" id="signup_spinner_revealer">
+                <property name="name">signup_spinner_revealer</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="transition_type">none</property>
+                <child>
+                  <object class="GtkSpinner">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="active">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">8</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkRevealer" id="signup_error_revealer">
+                <property name="name">signup_error_revealer</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkLabel" id="signup_error_label">
+                    <property name="name">signup_error_label</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Unknown error</property>
+                    <attributes>
+                      <attribute name="foreground" value="#cccc00000000"/>
+                    </attributes>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">9</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Already have an account? Log in!</property>
                 <property name="visible">True</property>
@@ -377,7 +390,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">8</property>
+                <property name="position">10</property>
               </packing>
             </child>
           </object>
