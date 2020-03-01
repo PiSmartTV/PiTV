@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <object class="GtkWindow" id="home_window">
@@ -8,7 +8,7 @@
     <property name="title" translatable="yes">PiTV</property>
     <property name="hide_titlebar_when_maximized">True</property>
     <signal name="destroy" handler="destroy" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -25,7 +25,7 @@
             <property name="orientation">vertical</property>
             <property name="spacing">2</property>
             <child>
-              <object class="GtkImage">
+              <object class="GtkImage" id="weather_image">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="pixel_size">250</property>
@@ -38,7 +38,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="weather_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">? C</property>
@@ -81,7 +81,7 @@
     <property name="name">login_window</property>
     <property name="can_focus">False</property>
     <signal name="destroy" handler="destroy" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -118,7 +118,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="login_username_field">
-                <property name="name">login_username_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="max_width_chars">35</property>
@@ -132,7 +131,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="login_password_field">
-                <property name="name">login_password_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="visibility">False</property>
@@ -160,46 +158,28 @@
               </packing>
             </child>
             <child>
-              <object class="GtkRevealer" id="login_spinner_revealer">
-                <property name="name">login_spinner_revealer</property>
-                <property name="visible">True</property>
+              <object class="GtkSpinner" id="login_spinner">
                 <property name="can_focus">False</property>
-                <property name="transition_type">none</property>
-                <child>
-                  <object class="GtkSpinner">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="active">True</property>
-                  </object>
-                </child>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="login_error_label">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Unknown error</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
                 <property name="position">5</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRevealer" id="login_error_revealer">
-                <property name="name">login_error_revealer</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="login_error_label">
-                    <property name="name">login_error_label</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Unknown error</property>
-                    <attributes>
-                      <attribute name="foreground" value="#cccc00000000"/>
-                    </attributes>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -209,7 +189,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
-                <signal name="clicked" handler="toggle_stack" swapped="no"/>
+                <signal name="clicked" handler="toggle_login_stack" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -263,7 +243,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="signup_name_field">
-                <property name="name">signup_name_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="max_width_chars">35</property>
@@ -277,7 +256,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="signup_email_field">
-                <property name="name">signup_email_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="max_width_chars">35</property>
@@ -291,7 +269,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="signup_retype_password_field">
-                <property name="name">signup_retype_password_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="visibility">False</property>
@@ -307,7 +284,6 @@
             </child>
             <child>
               <object class="GtkEntry" id="signup_password_field">
-                <property name="name">signup_password_field</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="visibility">False</property>
@@ -332,50 +308,32 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="signup_error_label">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Unknown error</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner" id="signup_spinner">
+                <property name="can_focus">False</property>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">7</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRevealer" id="signup_spinner_revealer">
-                <property name="name">signup_spinner_revealer</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="transition_type">none</property>
-                <child>
-                  <object class="GtkSpinner">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="active">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">8</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkRevealer" id="signup_error_revealer">
-                <property name="name">signup_error_revealer</property>
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <child>
-                  <object class="GtkLabel" id="signup_error_label">
-                    <property name="name">signup_error_label</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Unknown error</property>
-                    <attributes>
-                      <attribute name="foreground" value="#cccc00000000"/>
-                    </attributes>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">9</property>
               </packing>
             </child>
             <child>
@@ -385,7 +343,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="relief">none</property>
-                <signal name="clicked" handler="toggle_stack" swapped="no"/>
+                <signal name="clicked" handler="toggle_login_stack" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
