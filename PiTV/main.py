@@ -6,7 +6,8 @@ import requests
 import os
 import sys
 from widgets import (
-    ListTile
+    ListTile,
+    Category
 )
 
 
@@ -81,7 +82,7 @@ class PiTV(Gtk.Application):
         # localhost is development sollution)
         self.host = "http://127.0.0.1:8000"
 
-        self.home_init()  # Switch this back after debugging
+        self.login_init()  # Switch this back after debugging
 
     def home_refresh(self):
         # Fetch weather info
@@ -105,6 +106,8 @@ class PiTV(Gtk.Application):
         self.weather_label.set_label(
             str(self.weather_info.temperature) + chr(176) + postfix)
 
+        GLib.idle_add(self.current_thread.join)
+
     def home_init(self):
         # Fetch some environment variables
         self.openweather_apikey = os.environ.get("OPEN_WEATHER_API_KEY")
@@ -113,6 +116,7 @@ class PiTV(Gtk.Application):
         # Setting objects public variables to their object
         self.weather_image = self.builder.get_object("weather_image")
         self.weather_label = self.builder.get_object("weather_label")
+        self.home_stackitem = self.builder.get_object("home_stackitem")
         self.sidebar_actions_list = self.builder.get_object(
             "sidebar_actions_list"
         )
@@ -140,10 +144,14 @@ class PiTV(Gtk.Application):
         )
 
         # Fetch all data that needs to be refreshed every 2 minutes
-        self.home_refresh()
+        self.create_thread(self.home_refresh)
 
         # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
-        GLib.timeout_add(120000, self.home_refresh)
+        GLib.timeout_add(120000, lambda: self.create_thread(self.home_refresh))
+
+    def create_thread(self, function, *args):
+        self.current_thread = Thread(target=function)
+        self.current_thread.start()
 
     def login_init(self):
         self.login_error_label = self.builder.get_object(
@@ -197,7 +205,8 @@ class PiTV(Gtk.Application):
         self.login_spinner.set_visible(False)
 
         if response.status_code == 200:
-            GLib.idle_add(self.switch_window, self.home_window)
+            # GLib.idle_add(self.switch_window, self.home_window)
+            os.system("cd ~/Documents/Dev/PiSmartTV/SmartTV/ && python3 src/starter.py")
             GLib.idle_add(self.home_init)
             GLib.idle_add(self.current_thread.join)
         else:
@@ -221,8 +230,7 @@ class PiTV(Gtk.Application):
         # TODO: Fetch token
         self.login_spinner.set_visible(True)  # Hide Spinner
 
-        self.current_thread = Thread(target=self.validate_login)
-        self.current_thread.start()
+        self.create_thread(self.validate_login)
 
     def signup(self, *args):
         # Get signup info and store it in public variables
@@ -240,8 +248,7 @@ class PiTV(Gtk.Application):
         self.signup_spinner.set_visible(True)
 
         # Thread for validating and obtaining the user token
-        self.current_thread = Thread(target=self.validate_signup)
-        self.current_thread.start()
+        self.create_thread(self.validate_signup)
 
     def validate_signup(self):
         # TODO: Add more response error for user to know what to do
@@ -267,10 +274,14 @@ class PiTV(Gtk.Application):
                 "Error code:" + str(response.status_code))
 
     def on_sidebar_row_selected(self, listbox, listbox_row):
-        listbox_row.get_index()
+        index = listbox_row.get_index()
+        item = SIDEBAR_LABELS[index]
+        getattr(self, item.lower()+"_stack")()
 
     def home_stack(self):
-        print("adwdawd")
+        filename = "/home/cigla/Downloads/88438148_200829577687854_3453803397096931328_n.png"
+        cat = Category("Test", [("bla", filename)])
+        self.home_stackitem.insert(Gtk.Label(label="dawda"), 0)
 
     # def movies_stack(self):
     #     pass
@@ -278,6 +289,6 @@ class PiTV(Gtk.Application):
 
 if __name__ == "__main__":
     app = PiTV()
-    app.home_window.fullscreen()
-    app.home_window.show_all()
+    app.login_window.fullscreen()
+    app.login_window.show_all()
     Gtk.main()

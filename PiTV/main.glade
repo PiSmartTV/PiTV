@@ -78,31 +78,10 @@
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkListBox" id="home_stackitem">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkIconView" id="list">
-                    <property name="can_focus">False</property>
-                    <property name="margin">0</property>
-                    <property name="selection_mode">none</property>
-                    <property name="activate_on_single_click">True</property>
-                    <signal name="item-activated" handler="item_activated" swapped="no"/>
-                    <child>
-                      <object class="GtkCellRendererPixbuf" id="icon_cell">
-                        <property name="xpad">10</property>
-                        <property name="ypad">10</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkCellRendererText" id="text_cell">
-                        <property name="xpad">10</property>
-                        <property name="ypad">10</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
+                <property name="can_focus">False</property>
+                <property name="selection_mode">none</property>
               </object>
               <packing>
                 <property name="name">page0</property>
@@ -202,6 +181,7 @@
             <child>
               <object class="GtkSpinner" id="login_spinner">
                 <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
                 <property name="active">True</property>
               </object>
               <packing>
@@ -213,6 +193,7 @@
             <child>
               <object class="GtkLabel" id="login_error_label">
                 <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
                 <property name="label" translatable="yes">Unknown error</property>
                 <attributes>
                   <attribute name="foreground" value="#cccc00000000"/>
@@ -340,20 +321,6 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="signup_error_label">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Unknown error</property>
-                <attributes>
-                  <attribute name="foreground" value="#cccc00000000"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">6</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton">
                 <property name="label" translatable="yes">Sign up</property>
                 <property name="visible">True</property>
@@ -368,8 +335,24 @@
               </packing>
             </child>
             <child>
+              <object class="GtkLabel" id="signup_error_label">
+                <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
+                <property name="label" translatable="yes">Unknown error</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">6</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkSpinner" id="signup_spinner">
                 <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
                 <property name="active">True</property>
               </object>
               <packing>
@@ -402,5 +385,13 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="trending_liststore">
+    <columns>
+      <!-- column-name icon -->
+      <column type="GdkPixbuf"/>
+      <!-- column-name name -->
+      <column type="gchararray"/>
+    </columns>
   </object>
 </interface>
