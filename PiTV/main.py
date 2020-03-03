@@ -5,6 +5,9 @@ from entertainment import Weather, Location
 import requests
 import os
 import sys
+from widgets import (
+    ListTile
+)
 
 
 HOME_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -33,9 +36,23 @@ CONDITIONS = {
     "50n": "weather-fog"
 }
 
-SIDEBAR_ITEMS = {
+SIDEBAR_LABELS = [
+    "Home",
+    "Movies",
+    # "TV Shows",
+    # "TV",
+    # "Songs"
+    # "Settings"
+]
 
-}
+SIDEBAR_ICONS = [
+    "go-home",
+    "media-tape",
+    # "TV Shows",
+    # "TV",
+    # "Songs"
+    # "Settings"
+]
 
 
 class PiTV(Gtk.Application):
@@ -57,8 +74,6 @@ class PiTV(Gtk.Application):
 
         self.login_window = self.builder.get_object(
             "login_window")
-        self.login_window.fullscreen()
-
         self.home_window = self.builder.get_object(
             "home_window")
 
@@ -66,7 +81,7 @@ class PiTV(Gtk.Application):
         # localhost is development sollution)
         self.host = "http://127.0.0.1:8000"
 
-        self.login_init()
+        self.home_init()  # Switch this back after debugging
 
     def home_refresh(self):
         # Fetch weather info
@@ -78,7 +93,8 @@ class PiTV(Gtk.Application):
         )
 
         self.weather_image.set_from_icon_name(
-            CONDITIONS[self.weather_info.icon_code], SIDEBAR_WIDTH
+            CONDITIONS[self.weather_info.icon_code],
+            SIDEBAR_WIDTH
         )
 
         if self.unit_system == "metric":
@@ -97,6 +113,22 @@ class PiTV(Gtk.Application):
         # Setting objects public variables to their object
         self.weather_image = self.builder.get_object("weather_image")
         self.weather_label = self.builder.get_object("weather_label")
+        self.sidebar_actions_list = self.builder.get_object(
+            "sidebar_actions_list"
+        )
+
+        # Populate the list with actions
+        sidebar_len = len(SIDEBAR_LABELS)
+        for i in range(sidebar_len):
+            self.sidebar_actions_list.insert(
+                ListTile(
+                    SIDEBAR_LABELS[i],
+                    SIDEBAR_ICONS[i]
+                ), i
+            )
+
+        # Set size of weather_image
+        self.weather_image.set_pixel_size(SIDEBAR_WIDTH)
 
         # Fetch location
         self.location_info = Location()
@@ -167,6 +199,7 @@ class PiTV(Gtk.Application):
         if response.status_code == 200:
             GLib.idle_add(self.switch_window, self.home_window)
             GLib.idle_add(self.home_init)
+            GLib.idle_add(self.current_thread.join)
         else:
             self.login_error_label.set_visible(True)
             self.login_error_label.set_text(
@@ -188,8 +221,8 @@ class PiTV(Gtk.Application):
         # TODO: Fetch token
         self.login_spinner.set_visible(True)  # Hide Spinner
 
-        self.login_thread = Thread(target=self.validate_login)
-        self.login_thread.start()
+        self.current_thread = Thread(target=self.validate_login)
+        self.current_thread.start()
 
     def signup(self, *args):
         # Get signup info and store it in public variables
@@ -207,8 +240,8 @@ class PiTV(Gtk.Application):
         self.signup_spinner.set_visible(True)
 
         # Thread for validating and obtaining the user token
-        thread = Thread(target=self.validate_signup)
-        thread.start()
+        self.current_thread = Thread(target=self.validate_signup)
+        self.current_thread.start()
 
     def validate_signup(self):
         # TODO: Add more response error for user to know what to do
@@ -227,13 +260,24 @@ class PiTV(Gtk.Application):
 
         if response.status_code == 200:
             GLib.idle_add(self.toggle_login_stack)
+            GLib.idle_add(self.current_thread.join)
         else:
             self.signup_error_label.set_visible(True)
             self.signup_error_label.set_text(
                 "Error code:" + str(response.status_code))
 
+    def on_sidebar_row_selected(self, listbox, listbox_row):
+        listbox_row.get_index()
+
+    def home_stack(self):
+        print("adwdawd")
+
+    # def movies_stack(self):
+    #     pass
+
 
 if __name__ == "__main__":
     app = PiTV()
-    app.login_window.show()
+    app.home_window.fullscreen()
+    app.home_window.show_all()
     Gtk.main()

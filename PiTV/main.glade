@@ -54,9 +54,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkListBox">
+              <object class="GtkListBox" id="sidebar_actions_list">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <signal name="row-selected" handler="on_sidebar_row_selected" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -72,7 +73,48 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkStack" id="main_stack">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="hexpand">True</property>
+            <child>
+              <object class="GtkScrolledWindow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
+                <child>
+                  <object class="GtkIconView" id="list">
+                    <property name="can_focus">False</property>
+                    <property name="margin">0</property>
+                    <property name="selection_mode">none</property>
+                    <property name="activate_on_single_click">True</property>
+                    <signal name="item-activated" handler="item_activated" swapped="no"/>
+                    <child>
+                      <object class="GtkCellRendererPixbuf" id="icon_cell">
+                        <property name="xpad">10</property>
+                        <property name="ypad">10</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCellRendererText" id="text_cell">
+                        <property name="xpad">10</property>
+                        <property name="ypad">10</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="name">page0</property>
+                <property name="title" translatable="yes">page0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
         </child>
       </object>
     </child>
@@ -298,12 +340,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Sign up</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="signup" swapped="no"/>
+              <object class="GtkLabel" id="signup_error_label">
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Unknown error</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -312,12 +354,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="signup_error_label">
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Unknown error</property>
-                <attributes>
-                  <attribute name="foreground" value="#cccc00000000"/>
-                </attributes>
+              <object class="GtkButton">
+                <property name="label" translatable="yes">Sign up</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="signup" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
