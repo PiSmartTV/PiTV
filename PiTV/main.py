@@ -80,7 +80,8 @@ class PiTV(Gtk.Application):
 
         # Website host URL (As I currenly don't have website,
         # localhost is development sollution)
-        self.host = "http://127.0.0.1:8000"
+        # Switched to heroku basic plan (free)
+        self.host = "https://pitv.herokuapp.com"
 
         self.login_init()  # Switch this back after debugging
 
@@ -205,8 +206,7 @@ class PiTV(Gtk.Application):
         self.login_spinner.set_visible(False)
 
         if response.status_code == 200:
-            # GLib.idle_add(self.switch_window, self.home_window)
-            os.system("cd ~/Documents/Dev/PiSmartTV/SmartTV/ && python3 src/starter.py")
+            GLib.idle_add(self.switch_window, self.home_window)
             GLib.idle_add(self.home_init)
             GLib.idle_add(self.current_thread.join)
         else:

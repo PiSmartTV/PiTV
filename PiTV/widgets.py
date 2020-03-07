@@ -34,14 +34,18 @@ class Category(Gtk.Box):
         )
         self.pack_end(self.scroll_view, True, True, 0)
 
-        # FlowBox
-        self.flowbox = Gtk.FlowBox()
-        self.flowbox.set_selection_mode(0)
+        # Grid that hold cards
+        self.grid = Gtk.Grid()
+        # self.grid.set_size_request(1000, 500)
 
         for i, j in enumerate(items):
             name, image = j
             temp_button = Gtk.Button()
-            temp_button.set_size_request(45, 43)
+            # temp_button.set_valign(Gtk.Align.FILL)
+            # temp_button.set_halign(Gtk.Align.FILL)
+            # temp_button.set_hexpand(True)
+            # temp_button.set_vexpand(True)
+            temp_button.set_relief(Gtk.ReliefStyle.NONE)
             temp_box = Gtk.Box()
             temp_box.set_orientation(Gtk.Orientation.VERTICAL)
             temp_image = Gtk.Image.new_from_file(image)
@@ -49,19 +53,6 @@ class Category(Gtk.Box):
             temp_box.pack_start(temp_image, False, False, 2)
             temp_box.pack_start(Gtk.Label(label=name), False, False, 2)
             temp_button.add(temp_box)
-            self.flowbox.insert(temp_button, i)
+            self.grid.attach(temp_button, i, 0, 1, 1)
 
-        self.scroll_view.add(self.flowbox)
-
-
-# win = Gtk.Window()
-# cat = Category(
-#     "dawd",
-#     [
-#         ("dawda",
-#          "/home/cigla/Downloads/88438148_200829577687854_3453803397096931328_n.png")
-#     ]
-# )
-# win.add(cat)
-# win.show_all()
-# Gtk.main()
+        self.scroll_view.add(self.grid)
