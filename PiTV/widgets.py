@@ -15,6 +15,11 @@ class ListTile(Gtk.Box):
         self.pack_end(self.image, False, False, 6)
         self.pack_start(self.label, False, True, 6)
 
+    def show(self):
+        super().show()
+        self.image.show()
+        self.label.show()
+
 
 class Category(Gtk.Box):
     def __init__(self, category_name, items):
