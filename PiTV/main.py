@@ -5,14 +5,16 @@ from entertainment import Weather, Location
 import requests
 import os
 import sys
+from screeninfo import get_monitors
 from widgets import (
     ListTile,
     Category
 )
 
-
+MONITOR_WIDTH = get_monitors()[0].width
+MONITOR_HEIGHT = get_monitors()[0].height
 HOME_DIR = os.path.dirname(os.path.abspath(__file__))
-SIDEBAR_WIDTH = 250
+SIDEBAR_WIDTH = MONITOR_WIDTH/8
 
 sys.path.append(HOME_DIR)
 
@@ -131,6 +133,7 @@ class PiTV(Gtk.Application):
                     SIDEBAR_ICONS[i]
                 ), i
             )
+            print(i, SIDEBAR_LABELS[i])
 
         # Set size of weather_image
         self.weather_image.set_pixel_size(SIDEBAR_WIDTH)
@@ -280,11 +283,11 @@ class PiTV(Gtk.Application):
 
     def home_stack(self):
         filename = "/home/cigla/Downloads/88438148_200829577687854_3453803397096931328_n.png"
-        cat = Category("Test", [("bla", filename)])
+        # cat = Category("Test", [("bla", filename)])
         self.home_stackitem.insert(Gtk.Label(label="dawda"), 0)
 
-    # def movies_stack(self):
-    #     pass
+    def movies_stack(self):
+        pass
 
 
 if __name__ == "__main__":

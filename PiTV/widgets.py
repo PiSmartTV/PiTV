@@ -56,3 +56,13 @@ class Category(Gtk.Box):
             self.grid.attach(temp_button, i, 0, 1, 1)
 
         self.scroll_view.add(self.grid)
+
+
+# For testing purposes
+if __name__ == "__main__":
+    win = Gtk.Window()
+    listbox = Gtk.ListBox()
+    listbox.insert(ListTile("Blah", "go-home"), 0)
+    win.add(listbox)
+    win.show_all()
+    Gtk.main()
