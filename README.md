@@ -20,3 +20,11 @@ cd PiTV
 python3 application.py
 ```
 ## Contributing
+
+```sh
+git clone https://www.github.com/PiSmartTV/PiTV.git
+cd PiTV
+grep "TODO" -rnw .
+```
+
+And fix what is wrong!
