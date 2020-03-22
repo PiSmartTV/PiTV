@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
+import sys
+import os
+from threading import Thread
 from screeninfo import get_monitors
 import requests
 from entertainment import Weather, Location
-from gi.repository import Gtk, GLib, Gio
-from threading import Thread
 from utils import check_internet
-import sys
-import os
 from sidebar import SideBar, ListTile, WeatherBox
+from category import Category
+
+
+# Bypass linters
+if True:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk, GLib, Gio
+
 
 HOME_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(HOME_DIR)
-
 
 MONITOR_WIDTH = get_monitors()[0].width
 MONITOR_HEIGHT = get_monitors()[0].height
@@ -87,6 +93,7 @@ class PiTV(Gtk.Application):
         # Setting objects public variables to their object
         self.main_divider = self.builder.get_object("main_divider")
         self.main_stack = self.builder.get_object("main_stack")
+        self.category_view = self.builder.get_object("category_view")
 
         # Add Sidebar to window and place it in the beginning
         self.sidebar = SideBar(self.main_stack)
@@ -109,10 +116,10 @@ class PiTV(Gtk.Application):
         for i in range(sidebar_len):
             self.sidebar.add_action(SIDEBAR_LABELS[i], SIDEBAR_ICONS[i])
 
-        # Set focus to first child of sidebar list
-        # TODO: Fix focus so you can down arrow to select next sidebar action
-        # focused_tile = self.sidebar_list.get_row_at_index(0)
-        # self.sidebar.select_row(focused_tile)
+        for i in range(10):
+            cat = Category()
+            self.category_view.pack_start(cat, True, True, 2)
+            self.category_view.reorder_child(cat, i)
 
         # Fetch location
         self.location_info = Location()

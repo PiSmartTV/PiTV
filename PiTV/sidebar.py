@@ -1,7 +1,15 @@
 """
-Sidebar Template for PiTV, depends on sidebar.glade
+Sidebar, ListTile and WeatherBox template for PiTV, depends on sidebar.glade
 """
-from gi.repository import Gtk
+import os
+
+# Bypass linters
+if True:
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+
+HOME_DIR = os.path.dirname(os.path.abspath(__file__))
 
 CONDITIONS = {
     "01d": "weather-clear",
@@ -54,6 +62,9 @@ class SideBar(Gtk.Box):
     def add_action_widget(self, widget):
         # Add widget to list of actions
         self.actions.insert(widget, self.index)
+
+        if self.index == 0:
+            self.actions.select_row(self.actions.get_row_at_index(0))
 
         # Increment index by one, so next widget will be packed next
         self.index += 1
