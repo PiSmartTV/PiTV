@@ -130,3 +130,5 @@ dmypy.json
 
 *.glade~
 run_env.sh
+.vscode
+PiTV/test.py

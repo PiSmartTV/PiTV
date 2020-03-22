@@ -1,48 +1,22 @@
 #!/usr/bin/env python3
-from threading import Thread
-from gi.repository import Gtk, GLib, Gio
-from entertainment import Weather, Location
-import requests
-import os
-import sys
 from screeninfo import get_monitors
-from widgets import (
-    ListTile,
-    Category
-)
+import requests
+from entertainment import Weather, Location
+from gi.repository import Gtk, GLib, Gio
+from threading import Thread
+from utils import check_internet
+import sys
+import os
+from sidebar import SideBar, ListTile, WeatherBox
+
+HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(HOME_DIR)
+
 
 MONITOR_WIDTH = get_monitors()[0].width
 MONITOR_HEIGHT = get_monitors()[0].height
-HOME_DIR = os.path.dirname(os.path.abspath(__file__))
 SIDEBAR_WIDTH = MONITOR_WIDTH/8
 
-sys.path.append(HOME_DIR)
-
-UNITS = {
-    "metric": {"temperature": "C"},
-    "imperial": {"temperature": "F"}
-}
-
-CONDITIONS = {
-    "01d": "weather-clear",
-    "02d": "weather-few-clouds",
-    "03d": "weather-overcast",
-    "04d": "weather-overcast",
-    "09d": "weather-showers",
-    "10d": "weather-showers-scattered",
-    "11d": "weather-storm",
-    "13d": "weather-snow",
-    "50d": "weather-fog",
-    "01n": "weather-clear-night",
-    "02n": "weather-few-clouds-night",
-    "03n": "weather-overcast",
-    "04n": "weather-overcast",
-    "09n": "weather-showers",
-    "10n": "weather-showers-scattered",
-    "11n": "weather-storm",
-    "13n": "weather-snow",
-    "50n": "weather-fog"
-}
 
 SIDEBAR_LABELS = [
     "Home",
@@ -95,50 +69,50 @@ class PiTV(Gtk.Application):
     def home_refresh(self):
         # Fetch weather info
         # TODO:Prompt user for his openweathermap api key
-        self.weather_info = Weather(
-            self.openweather_apikey,
-            self.unit_system,
-            self.city_and_country
-        )
+        if not self.weather_info:
+            self.weather_info = Weather(
+                self.openweather_apikey,
+                self.unit_system,
+                self.city_and_country
+            )
+            self.weather_box.set_weather_object(self.weather_info, update=True)
 
-        self.weather_image.set_from_icon_name(
-            CONDITIONS[self.weather_info.icon_code],
-            SIDEBAR_WIDTH
-        )
-
-        self.weather_label.set_label(
-            str(self.weather_info.temperature) + chr(176) + UNITS[self.unit_system]["temperature"])
+        else:
+            self.weather_box.update_data()
+            self.weather_box.refresh()
 
         GLib.idle_add(self.current_thread.join)
 
     def home_init(self):
+        # Setting objects public variables to their object
+        self.main_divider = self.builder.get_object("main_divider")
+        self.main_stack = self.builder.get_object("main_stack")
+
+        # Add Sidebar to window and place it in the beginning
+        self.sidebar = SideBar(self.main_stack)
+        self.main_divider.pack_start(self.sidebar, False, False, 0)
+        self.main_divider.reorder_child(self.sidebar, 0)
+
         # Fetch some environment variables
         self.openweather_apikey = os.environ.get("OPEN_WEATHER_API_KEY")
         self.unit_system = os.environ.get("UNIT_SYSTEM")
 
-        # Setting objects public variables to their object
-        self.weather_image = self.builder.get_object("weather_image")
-        self.weather_label = self.builder.get_object("weather_label")
-        self.home_stack_list = self.builder.get_object("home_stack_list")
-        self.main_stack = self.builder.get_object("main_stack")
-        self.sidebar_actions_list = self.builder.get_object(
-            "sidebar_actions_list"
-        )
+        # Setting weather_info to None
+        self.weather_info = None
+
+        # Instantiate and pack WeatherBox widget, later add weather_info to it
+        self.weather_box = WeatherBox(SIDEBAR_WIDTH)
+        self.sidebar.add_start_widget(self.weather_box)
 
         # Populate the list with sidebar actions
         sidebar_len = len(SIDEBAR_LABELS)
-        for i in range(sidebar_len-1, -1, -1):
-            temp_list_tile = ListTile(SIDEBAR_LABELS[i], SIDEBAR_ICONS[i])
-            temp_list_tile.show()
-            self.sidebar_actions_list.insert(temp_list_tile, i)
+        for i in range(sidebar_len):
+            self.sidebar.add_action(SIDEBAR_LABELS[i], SIDEBAR_ICONS[i])
 
         # Set focus to first child of sidebar list
         # TODO: Fix focus so you can down arrow to select next sidebar action
-        focused_tile = self.sidebar_actions_list.get_row_at_index(0)
-        self.sidebar_actions_list.select_row(focused_tile)
-
-        # Set size of weather_image
-        self.weather_image.set_pixel_size(SIDEBAR_WIDTH)
+        # focused_tile = self.sidebar_list.get_row_at_index(0)
+        # self.sidebar.select_row(focused_tile)
 
         # Fetch location
         self.location_info = Location()
@@ -201,10 +175,10 @@ class PiTV(Gtk.Application):
                 "username": self.username,
                 "password": self.password
             })
-        except Exception as e:
+        except Exception as exception:
             self.login_error_label.set_visible(True)
             self.login_error_label.set_text(
-                "Error code:" + str(e)
+                "Error code:" + str(exception)
             )
             return
 
@@ -235,7 +209,11 @@ class PiTV(Gtk.Application):
         # TODO: Fetch token
         self.login_spinner.set_visible(True)  # Hide Spinner
 
-        self.create_thread(self.validate_login)
+        self.network_state = check_internet()
+        if self.network_state:
+            self.create_thread(self.validate_login)
+        else:
+            self.login_error_label.set_text("No internet connection")
 
     def signup(self, *args):
         # Get signup info and store it in public variables
@@ -279,19 +257,16 @@ class PiTV(Gtk.Application):
             self.signup_error_label.set_text(
                 "Error code:" + str(response.status_code))
 
-    def on_sidebar_row_selected(self, listbox, listbox_row):
-        index = listbox_row.get_index()
-        item = SIDEBAR_LABELS[index]
-        getattr(self, item.lower()+"_stack")()
+    # def on_sidebar_row_selected(self, listbox, listbox_row):
+    #     index = listbox_row.get_index()
+    #     item = SIDEBAR_LABELS[index]
+    #     getattr(self, item.lower()+"_stack")()
 
-    def home_stack(self):
-        print("Home")
+    # def home_stack(self):
+    #     print("Home")
 
-    def movies_stack(self):
-        print("Movies")
-
-    def movies_stack(self):
-        pass
+    # def movies_stack(self):
+    #     print("Movies")
 
 
 if __name__ == "__main__":

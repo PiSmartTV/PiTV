@@ -27,149 +27,6 @@ Author: GrbavaCigla
   <!-- interface-name PiTV -->
   <!-- interface-description Smart TV for Raspberry Pi built on AlpineLinux. It support torrents for movies and tv series, songs, weather forecast, android apps, online account! -->
   <!-- interface-authors GrbavaCigla -->
-  <object class="GtkWindow" id="home_window">
-    <property name="name">home_window</property>
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">PiTV</property>
-    <property name="hide_titlebar_when_maximized">True</property>
-    <signal name="destroy" handler="destroy" swapped="no"/>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkBox" id="main_divider">
-        <property name="name">main_divider</property>
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="spacing">6</property>
-        <child>
-          <object class="GtkBox" id="sidebar">
-            <property name="name">sidebar</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">2</property>
-            <child>
-              <object class="GtkImage" id="weather_image">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="pixel_size">250</property>
-                <property name="icon_name">image-missing</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="weather_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">? C</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                  <attribute name="scale" value="1.5"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkViewport">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkListBox" id="sidebar_actions_list">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="receives_default">True</property>
-                        <signal name="row-selected" handler="on_sidebar_row_selected" swapped="no"/>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkStack" id="main_stack">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkViewport">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <object class="GtkListBox" id="home_stack_list">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="selection_mode">none</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="name">page0</property>
-                <property name="title" translatable="yes">page0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkScrolledWindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="shadow_type">in</property>
-                <child>
-                  <object class="GtkViewport">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="name">page1</property>
-                <property name="title" translatable="yes">page1</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
   <object class="GtkWindow" id="login_window">
     <property name="name">login_window</property>
     <property name="can_focus">False</property>
@@ -393,13 +250,12 @@ Author: GrbavaCigla
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="signup_error_label">
-                <property name="can_focus">False</property>
-                <property name="no_show_all">True</property>
-                <property name="label" translatable="yes">Unknown error</property>
-                <attributes>
-                  <attribute name="foreground" value="#cccc00000000"/>
-                </attributes>
+              <object class="GtkButton">
+                <property name="label" translatable="yes">Sign up</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="signup" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -408,12 +264,13 @@ Author: GrbavaCigla
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Sign up</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <signal name="clicked" handler="signup" swapped="no"/>
+              <object class="GtkLabel" id="signup_error_label">
+                <property name="can_focus">False</property>
+                <property name="no_show_all">True</property>
+                <property name="label" translatable="yes">Unknown error</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -452,6 +309,40 @@ Author: GrbavaCigla
           <packing>
             <property name="name">page1</property>
             <property name="title" translatable="yes">page1</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="home_window">
+    <property name="name">home_window</property>
+    <property name="can_focus">False</property>
+    <property name="transient_for">login_window</property>
+    <signal name="destroy" handler="destroy" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkBox" id="main_divider">
+        <property name="name">main_divider</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">6</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child>
+          <object class="GtkStack" id="main_stack">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
