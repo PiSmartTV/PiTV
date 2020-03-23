@@ -94,6 +94,12 @@ class PiTV(Gtk.Application):
         self.main_divider = self.builder.get_object("main_divider")
         self.main_stack = self.builder.get_object("main_stack")
         self.category_view = self.builder.get_object("category_view")
+        self.home_scroll_view = self.builder.get_object("home_scroll_view")
+
+        # Scrolling adjustment
+        self.category_view.set_focus_vadjustment(
+            self.home_scroll_view.get_vadjustment()
+        )
 
         # Add Sidebar to window and place it in the beginning
         self.sidebar = SideBar(self.main_stack)
@@ -118,8 +124,8 @@ class PiTV(Gtk.Application):
 
         for i in range(10):
             cat = Category()
-            self.category_view.pack_start(cat, True, True, 2)
-            self.category_view.reorder_child(cat, i)
+            self.category_view.pack_start(cat, False, False, 6)
+            cat.show()
 
         # Fetch location
         self.location_info = Location()

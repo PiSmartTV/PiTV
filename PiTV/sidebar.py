@@ -120,7 +120,6 @@ class WeatherBox(Gtk.Box):
             # Setting the data
             self.temperature = self.weather_object.temperature
             self.icon_name = CONDITIONS[self.weather_object.icon_code]
-        pass
 
     def refresh(self):
         # Checking if weather_object exists

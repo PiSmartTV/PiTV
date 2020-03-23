@@ -29,7 +29,7 @@
         <property name="can_focus">False</property>
         <property name="margin_left">87</property>
         <property name="pixel_size">48</property>
-        <property name="icon_name">accessories-calculator</property>
+        <property name="icon_name">image-missing</property>
       </object>
       <packing>
         <property name="expand">False</property>

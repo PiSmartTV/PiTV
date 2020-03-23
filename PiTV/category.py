@@ -17,20 +17,24 @@ class ImageTile(Gtk.Button):
     def __init__(self, name=None, icon=None, **kwargs):
         super().__init__(**kwargs)
 
+        if name:
+            pass
+
 
 @Gtk.Template(filename="category.glade")
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
+    # TODO: Arrow navigation
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         # TODO: This is really bad solution fix this as soon as possible
-        self.flowbox = self.get_children()[1].get_children()[
-            0].get_children()[0]
+        self.scroll_view = self.get_children()[1]
+        self.box = self.scroll_view.get_children()[0].get_children()[0]
+
+        self.box.set_focus_hadjustment(self.scroll_view.get_hadjustment())
 
         for i in range(10):
             it = ImageTile()
-            self.flowbox.insert(it, i)
-
-        # self.flowbox = get_children()[0]
+            self.box.pack_start(it, False, False, 2)

@@ -8,7 +8,6 @@
     <property name="visible">True</property>
     <property name="can_focus">True</property>
     <property name="receives_default">True</property>
-    <property name="relief">none</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
@@ -32,7 +31,7 @@
           <object class="GtkLabel">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Title</property>
+            <property name="label" translatable="yes">Loading</property>
             <attributes>
               <attribute name="weight" value="semibold"/>
               <attribute name="scale" value="1.2"/>
