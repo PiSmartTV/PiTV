@@ -154,21 +154,3 @@ class ListTile(Gtk.Box):
 
         # Icon size doesn't work, don't know why
         image.set_from_icon_name(icon_name, 48)
-
-
-if __name__ == "__main__":
-    win = Gtk.Window()
-    sb = SideBar()
-
-    from entertainment import Weather
-    bla = Weather("8c3c568a4fe0d962cbb0ac82663750fd",
-                  "metric", "Serbia,Novi Sad")
-    wb = WeatherBox(250, bla)
-    wb.show()
-    sb.pack_start(wb, False, False, True)
-
-    for i in range(10):
-        sb.add_action(f"NuM:{i}", "image-missing")
-    win.add(sb)
-    win.show_all()
-    Gtk.main()
