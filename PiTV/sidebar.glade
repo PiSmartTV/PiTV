@@ -23,6 +23,7 @@
               <object class="GtkListBox" id="sidebar_list">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="activate_on_single_click">False</property>
                 <signal name="row-selected" handler="on_sidebar_list_row_selected" object="SideBar" swapped="no"/>
               </object>
             </child>

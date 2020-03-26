@@ -23,6 +23,8 @@ MONITOR_WIDTH = get_monitors()[0].width
 MONITOR_HEIGHT = get_monitors()[0].height
 SIDEBAR_WIDTH = MONITOR_WIDTH/8
 
+# 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
+REFRESH_MILLS = 12000
 
 SIDEBAR_LABELS = [
     "Home",
@@ -72,6 +74,8 @@ class PiTV(Gtk.Application):
 
         self.login_init()  # Switch this back after debugging
 
+        self.create_thread(self.recheck_network)
+
     def home_refresh(self):
         # Fetch weather info
         # TODO:Prompt user for his openweathermap api key
@@ -86,6 +90,15 @@ class PiTV(Gtk.Application):
         else:
             self.weather_box.update_data()
             self.weather_box.refresh()
+
+        GLib.timeout_add(
+            REFRESH_MILLS,
+            lambda: self.create_thread(self.home_refresh)
+        )
+        GLib.idle_add(self.current_thread.join)
+
+    def recheck_network(self):
+        self.network_state = check_internet()
 
         GLib.idle_add(self.current_thread.join)
 
@@ -140,7 +153,10 @@ class PiTV(Gtk.Application):
         self.create_thread(self.home_refresh)
 
         # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
-        GLib.timeout_add(120000, lambda: self.create_thread(self.home_refresh))
+        GLib.timeout_add(
+            REFRESH_MILLS,
+            lambda: self.create_thread(self.home_refresh)
+        )
 
     def create_thread(self, function, *args):
         self.current_thread = Thread(target=function)

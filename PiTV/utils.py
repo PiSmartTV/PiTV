@@ -3,6 +3,13 @@ Non-gtk functions and classes module for PiTV
 """
 import socket
 import sqlite3
+import os
+import requests
+
+# TODO: This is temporary change this to system cache folder
+# like ~/.cache
+# This will also remove on reboot
+CACHE_DIR = "/tmp/pitv"
 
 
 def check_internet(host="8.8.8.8", port=53, timeout=3):
@@ -23,11 +30,12 @@ def check_internet(host="8.8.8.8", port=53, timeout=3):
         return False
 
 
-def check_server(timeout):
+def check_server(timeout=3):
     """Checks if PiTV server is up
 
-    :param timeout: maximum retries (Defaukt value = 3)
-    :returns bool
+    :param timeout: maximum retries (Defaukt value = 3) (Default value = 3)
+    :returns: bool
+
     """
     return check_internet(
         host="pitv.herokuapp.com",
@@ -36,51 +44,27 @@ def check_server(timeout):
     )
 
 
-# TODO: Test and fix this class, don't use it now
-class Settings(dict):
-    """SQLite3 Wrapper to store config file
+def cache_file(url, filename):
+    """Caches file in CACHE_DIR location
 
-    :param username: unique username string
+    :param url: URL of file to be downloaded\n
+    :param filename: Name of file, absolute path is CACHE_DIR+filename\n
+    :returns: absolute path to file\n
+    :raises requests.exceptions.MissingSchema: The URL schema (e.g. http or https) is missing\n
+    :raises requests.exceptions.ConnectionError: The URL doesn't exist or there is no internet connection\n
+    :raises requests.exceptions.InvalidSchema: The URL schema is invalid (e.g. ftp)\n
+    :raises Exception: Response code is not 200\n
 
     """
 
-    def __init__(self, username):
-        super().__init__()
+    if not os.path.isdir(CACHE_DIR):
+        os.mkdir(CACHE_DIR)
 
-        self.username = username
-
-        # Set it to tmp so it gets deleted on reboot
-        # This is for testing
-        # TODO: Change this to something like ~/.config/pitv
-        self.connection = sqlite3.connect("/tmp/settings.db")
-        self.cursor = self.connection.cursor()
-
-        self.cursor.execute(
-            "CREATE TABLE IF NOT EXISTS settings"
-            "("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "username varchar(64) UNIQUE"
-            ");")
-
-    def flush(self):
-        """Adds all keys to database as columns"""
-        for key, value in self.items():
-            # TODO: Add edge cases, this function is very bad
-
-            # Checking the variable type
-            if isinstance(value, str):
-                value = "text"
-            else:
-                column_type = type(value).__name__
-
-            # Adding column to settings
-            self.cursor.execute(
-                "ALTER TABLE settings ADD COLUMN {} {};".format(key, column_type))
-
-    def save(self):
-        """Commits changes to database
-        alias to connection.commit()
-
-
-        """
-        self.connection.commit()
+    filepath = os.path.join(CACHE_DIR, filename)
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(filepath, "w+") as file:
+            file.write(response.text)
+        return filepath
+    else:
+        raise Exception(f"Response code: {response.status_code}")
