@@ -1,5 +1,6 @@
 # PiTV
 New version of SmartTV. Better code, faster, optimized.
+__Currently, it doesn't work, I have deleted the dependency, fix is comming soon!__
 
 ## Installation
 
