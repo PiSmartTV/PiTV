@@ -4,11 +4,11 @@ import os
 from threading import Thread
 from screeninfo import get_monitors
 import requests
-from entertainment import Weather, Location
+from weather import Weather
+from location import Location
 from utils import check_internet
 from sidebar import SideBar, ListTile, WeatherBox
 from category import Category
-
 
 # Bypass linters
 if True:
@@ -16,7 +16,7 @@ if True:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk, GLib, Gio
 
-
+HOST = "http://127.0.0.1"
 HOME_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MONITOR_WIDTH = get_monitors()[0].width
@@ -32,7 +32,7 @@ SIDEBAR_LABELS = [
     # "TV Shows",
     # "TV",
     # "Songs"
-    # "Settings"
+    "Settings"
 ]
 
 SIDEBAR_ICONS = [
@@ -41,7 +41,7 @@ SIDEBAR_ICONS = [
     # "TV Shows",
     # "TV",
     # "Songs"
-    # "Settings"
+    "open-menu"
 ]
 
 
@@ -69,8 +69,11 @@ class PiTV(Gtk.Application):
 
         # Website host URL (As I currenly don't have website,
         # localhost is development sollution)
-        # Switched to heroku basic plan (free)
-        self.host = "https://pitv.herokuapp.com"
+        # Switched to heroku free plan
+        # Switched to Azure donated by Maker NS
+        self.host = HOST
+
+        self.fetch_weather = True
 
         self.login_init()  # Switch this back after debugging
 
@@ -79,17 +82,22 @@ class PiTV(Gtk.Application):
     def home_refresh(self):
         # Fetch weather info
         # TODO:Prompt user for his openweathermap api key
-        if not self.weather_info:
-            self.weather_info = Weather(
-                self.openweather_apikey,
-                self.unit_system,
-                self.city_and_country
-            )
-            self.weather_box.set_weather_object(self.weather_info, update=True)
 
-        else:
-            self.weather_box.update_data()
-            self.weather_box.refresh()
+        if self.fetch_weather:
+            if not self.weather_info:
+                self.weather_info = Weather(
+                    self.openweather_apikey,
+                    self.unit_system,
+                    self.city_and_country
+                )
+                self.weather_box.set_weather_object(
+                    self.weather_info,
+                    update=True
+                )
+
+            else:
+                self.weather_box.update_data()
+                self.weather_box.refresh()
 
         GLib.timeout_add(
             REFRESH_MILLS,
@@ -99,29 +107,36 @@ class PiTV(Gtk.Application):
 
     def recheck_network(self):
         self.network_state = check_internet()
-
         GLib.idle_add(self.current_thread.join)
 
     def home_init(self):
         # Setting objects public variables to their object
-        self.main_divider = self.builder.get_object("main_divider")
-        self.main_stack = self.builder.get_object("main_stack")
+        self.home_divider = self.builder.get_object("home_divider")
+        self.home_stack = self.builder.get_object("home_stack")
         self.category_view = self.builder.get_object("category_view")
-        self.home_scroll_view = self.builder.get_object("home_scroll_view")
+        self.home_trending_scroll_view = self.builder.get_object(
+            "home_trending_scroll_view")
 
         # Scrolling adjustment
         self.category_view.set_focus_vadjustment(
-            self.home_scroll_view.get_vadjustment()
+            self.home_trending_scroll_view.get_vadjustment()
         )
 
         # Add Sidebar to window and place it in the beginning
-        self.sidebar = SideBar(self.main_stack)
-        self.main_divider.pack_start(self.sidebar, False, False, 0)
-        self.main_divider.reorder_child(self.sidebar, 0)
+        self.sidebar = SideBar(self.home_stack)
+        self.home_divider.pack_start(self.sidebar, False, False, 0)
+        self.home_divider.reorder_child(self.sidebar, 0)
 
         # Fetch some environment variables
         self.openweather_apikey = os.environ.get("OPEN_WEATHER_API_KEY")
         self.unit_system = os.environ.get("UNIT_SYSTEM")
+
+        # Check if they are empty
+        if not self.unit_system:
+            self.unit_system = "metric"
+
+        if not self.openweather_apikey:
+            self.fetch_weather = False
 
         # Setting weather_info to None
         self.weather_info = None
@@ -146,7 +161,7 @@ class PiTV(Gtk.Application):
         # Make formatted location for open weather map
         self.city_and_country = "{},{}".format(
             self.location_info.city,
-            self.location_info.countryCode
+            self.location_info.country_code
         )
 
         # Fetch all data that needs to be refreshed every 2 minutes
@@ -285,17 +300,6 @@ class PiTV(Gtk.Application):
             self.signup_error_label.set_visible(True)
             self.signup_error_label.set_text(
                 "Error code:" + str(response.status_code))
-
-    # def on_sidebar_row_selected(self, listbox, listbox_row):
-    #     index = listbox_row.get_index()
-    #     item = SIDEBAR_LABELS[index]
-    #     getattr(self, item.lower()+"_stack")()
-
-    # def home_stack(self):
-    #     print("Home")
-
-    # def movies_stack(self):
-    #     print("Movies")
 
 
 if __name__ == "__main__":

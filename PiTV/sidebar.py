@@ -1,5 +1,5 @@
 """
-Sidebar, ListTile and WeatherBox template for PiTV, depends on sidebar.glade
+Sidebar, ListTile and WeatherBox template for PiTV, depends on sidebar.glade, weather_box.glade, list_tile.glade
 """
 import os
 
@@ -47,7 +47,7 @@ class SideBar(Gtk.Box):
         self.stack = stack
         self.index = 0
 
-        # TODO:Better solution for this
+        # TODO:Better solution for this (critical)
         self.actions = self.get_children()[0].get_children()[
             0].get_children()[0]
 
