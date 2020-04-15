@@ -10,6 +10,7 @@ import requests
 # like ~/.cache
 # This will also remove on reboot
 CACHE_DIR = "/tmp/pitv"
+HOST = "https://pitv.herokuapp.com/"
 
 
 def check_internet(host="8.8.8.8", port=53, timeout=3):
@@ -38,7 +39,7 @@ def check_server(timeout=3):
 
     """
     return check_internet(
-        host="pitv.herokuapp.com",
+        host=HOST,
         port=443,
         timeout=timeout
     )

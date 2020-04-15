@@ -6,9 +6,11 @@ from screeninfo import get_monitors
 import requests
 from weather import Weather
 from location import Location
-from utils import check_internet
+from utils import check_internet, check_server
 from sidebar import SideBar, ListTile, WeatherBox
 from category import Category
+import json
+import time
 
 # Bypass linters
 if True:
@@ -16,8 +18,11 @@ if True:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk, GLib, Gio
 
-HOST = "http://127.0.0.1"
+HOST = "https://pitv.herokuapp.com/"
 HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+# CONFIG_DIR = os.path.join(HOME_DIR, ".config", "PiTV")
+CONFIG_DIR = "/tmp"
+# os.mkdir(CONFIG_DIR)
 
 MONITOR_WIDTH = get_monitors()[0].width
 MONITOR_HEIGHT = get_monitors()[0].height
@@ -25,6 +30,9 @@ SIDEBAR_WIDTH = MONITOR_WIDTH/8
 
 # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
 REFRESH_MILLS = 12000
+
+# 60seconds
+CODE_EXPIRE = 10
 
 SIDEBAR_LABELS = [
     "Home",
@@ -72,10 +80,9 @@ class PiTV(Gtk.Application):
         # Switched to heroku free plan
         # Switched to Azure donated by Maker NS
         self.host = HOST
-
         self.fetch_weather = True
 
-        self.login_init()  # Switch this back after debugging
+        self.login_init()
 
         self.create_thread(self.recheck_network)
 
@@ -103,11 +110,9 @@ class PiTV(Gtk.Application):
             REFRESH_MILLS,
             lambda: self.create_thread(self.home_refresh)
         )
-        GLib.idle_add(self.current_thread.join)
 
     def recheck_network(self):
         self.network_state = check_internet()
-        GLib.idle_add(self.current_thread.join)
 
     def home_init(self):
         # Setting objects public variables to their object
@@ -173,11 +178,23 @@ class PiTV(Gtk.Application):
             lambda: self.create_thread(self.home_refresh)
         )
 
-    def create_thread(self, function, *args):
-        self.current_thread = Thread(target=function)
-        self.current_thread.start()
+    def create_thread(self, target, *args):
+        thread = Thread(target=target, args=args)
+        thread.setName(target.__name__)
+        thread.setDaemon(True)
+        thread.start()
+
+    def switch_to_code(self, *args):
+        stack = self.builder.get_object("login_stack")
+        self.stack_state = 1
+        stack.set_visible_child(stack.get_children()[2])
+        stack.get_children()[2].show()
 
     def login_init(self):
+        # Default to "code view"
+        self.switch_to_code()
+
+        # Get error labels and spinners
         self.login_error_label = self.builder.get_object(
             "login_error_label")
         self.signup_error_label = self.builder.get_object(
@@ -187,8 +204,16 @@ class PiTV(Gtk.Application):
         self.signup_spinner = self.builder.get_object(
             "signup_spinner")
 
+        # Get code label
+        self.code_label = self.builder.get_object("code_label")
+
+        # Get code progressbar
+        self.login_progress = self.builder.get_object("login_progressbar")
+
         # Login and Signup state (0 - login, 1 - signup)
-        self.stack_state = 0
+        # It also gets inverted when in "code view"
+        # Thats why it is set to 1
+        self.stack_state = 1
 
         # Default to empty string
         self.password = ""
@@ -198,6 +223,42 @@ class PiTV(Gtk.Application):
 
         # Session is required to store cookies
         self.session = requests.session()
+
+        self.create_thread(self.update_code)
+
+    def update_code(self):
+        print("Code update")
+
+        # Fetching login code from website
+        raw_code = self.session.get(HOST+"/code")
+
+        # Calculate expire time by adding CODE_EXPIRE seconds to current time
+        end_time = time.time() + CODE_EXPIRE
+
+        # TODO: Add logging here
+        if not raw_code.status_code == 200:
+            exit(1)
+
+        code = json.loads(raw_code.text)["code"]
+
+        self.code_label.set_label(code)
+
+        recheck_end_time = time.time() + 2
+
+        while end_time >= time.time():
+            fraction = (CODE_EXPIRE - (end_time - time.time())) / CODE_EXPIRE
+            self.login_progress.set_fraction(fraction)
+
+            raw_post = self.session.post(HOST+"/code", data={"code": code})
+            if raw_post.status_code == 200:
+                print("good")
+                GLib.idle_add(self.switch_window, self.home_window)
+                GLib.idle_add(self.home_init)
+                return
+            time.sleep(1)
+
+        # Convert seconds to milliseconds
+        GLib.idle_add(self.create_thread(self.update_code))
 
     def toggle_login_stack(self, *args):
 
@@ -214,32 +275,39 @@ class PiTV(Gtk.Application):
 
     def validate_login(self):
         # TODO: Add more response error for user to know what to do
-        try:
-            response = self.session.post(self.host+"/login", data={
-                "username": self.username,
-                "password": self.password
-            })
-        except Exception as exception:
-            self.login_error_label.set_visible(True)
-            self.login_error_label.set_text(
-                "Error code:" + str(exception)
-            )
-            return
+        self.network_state = check_server()
 
-        self.login_spinner.set_visible(False)
+        if self.network_state:
+            try:
+                response = self.session.post(self.host+"/login", data={
+                    "username": self.username,
+                    "password": self.password
+                })
+            except Exception as exception:
+                self.login_error_label.set_visible(True)
+                self.login_error_label.set_text(
+                    "Error code:" + str(exception)
+                )
+                return
 
-        if response.status_code == 200:
-            GLib.idle_add(self.switch_window, self.home_window)
-            GLib.idle_add(self.home_init)
-            GLib.idle_add(self.current_thread.join)
+            if response.status_code == 200:
+                GLib.idle_add(self.switch_window, self.home_window)
+                GLib.idle_add(self.home_init)
+
+            else:
+                self.login_error_label.set_visible(True)
+                self.login_error_label.set_text(
+                    "Error code:" + str(response.status_code)
+                )
         else:
             self.login_error_label.set_visible(True)
             self.login_error_label.set_text(
-                "Error code:" + str(response.status_code)
-            )
+                "No internet connection or server is down!")
+
+        self.login_spinner.set_visible(False)
 
     def switch_window(self, window):
-        window.fullscreen()
+        # window.fullscreen()
         window.show_all()
 
     def login(self, *args):
@@ -253,11 +321,7 @@ class PiTV(Gtk.Application):
         # TODO: Fetch token
         self.login_spinner.set_visible(True)  # Hide Spinner
 
-        self.network_state = check_internet()
-        if self.network_state:
-            self.create_thread(self.validate_login)
-        else:
-            self.login_error_label.set_text("No internet connection")
+        self.create_thread(self.validate_login)
 
     def signup(self, *args):
         # Get signup info and store it in public variables
@@ -279,31 +343,37 @@ class PiTV(Gtk.Application):
 
     def validate_signup(self):
         # TODO: Add more response error for user to know what to do
+        self.network_state = check_server()
 
         if self.retype_password != self.password:
-            GLib.idle_add(self.current_thread.join)
+
             return
 
-        response = self.session.post(self.host+"/register", data={
-            "username": self.username,
-            "password": self.password,
-            "name": self.name,
-            "email": self.email
-        })
+        if self.network_state:
+            response = self.session.post(self.host+"/register", data={
+                "username": self.username,
+                "password": self.password,
+                "name": self.name,
+                "email": self.email
+            })
 
-        self.signup_spinner.set_visible(False)
+            if response.status_code == 200:
+                GLib.idle_add(self.toggle_login_stack)
 
-        if response.status_code == 200:
-            GLib.idle_add(self.toggle_login_stack)
-            GLib.idle_add(self.current_thread.join)
+            else:
+                self.signup_error_label.set_visible(True)
+                self.signup_error_label.set_text(
+                    "Error code:" + str(response.status_code))
         else:
             self.signup_error_label.set_visible(True)
             self.signup_error_label.set_text(
-                "Error code:" + str(response.status_code))
+                "No internet connection or server is down!")
+
+        self.signup_spinner.set_visible(False)
 
 
 if __name__ == "__main__":
     app = PiTV()
-    app.login_window.fullscreen()
+    # app.login_window.fullscreen()
     app.login_window.show_all()
     Gtk.main()
