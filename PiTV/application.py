@@ -32,7 +32,7 @@ SIDEBAR_WIDTH = MONITOR_WIDTH/8
 REFRESH_MILLS = 12000
 
 # 60seconds
-CODE_EXPIRE = 10
+CODE_EXPIRE = 60
 
 SIDEBAR_LABELS = [
     "Home",
@@ -307,7 +307,7 @@ class PiTV(Gtk.Application):
         self.login_spinner.set_visible(False)
 
     def switch_window(self, window):
-        # window.fullscreen()
+        window.fullscreen()
         window.show_all()
 
     def login(self, *args):
@@ -374,6 +374,6 @@ class PiTV(Gtk.Application):
 
 if __name__ == "__main__":
     app = PiTV()
-    # app.login_window.fullscreen()
+    app.login_window.fullscreen()
     app.login_window.show_all()
     Gtk.main()
