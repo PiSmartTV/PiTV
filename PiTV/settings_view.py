@@ -13,7 +13,7 @@ if True:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
 
-HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 WIDGET_GETTERS = {
     Gtk.Scale: "get_value",
@@ -37,7 +37,7 @@ class Setting:
         self.default = default
 
 
-@Gtk.Template(filename=os.path.join(HOME_DIR, "settings_view.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "settings_view.glade"))
 class SettingsView(Gtk.Box):
     __gtype_name__ = 'SettingsView'
 

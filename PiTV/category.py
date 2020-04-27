@@ -9,10 +9,10 @@ if True:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
 
-HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-@Gtk.Template(filename=os.path.join(HOME_DIR, "image_tile.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "image_tile.glade"))
 class ImageTile(Gtk.Button):
     __gtype_name__ = "ImageTile"
 
@@ -23,7 +23,7 @@ class ImageTile(Gtk.Button):
             pass
 
 
-@Gtk.Template(filename=os.path.join(HOME_DIR, "category.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "category.glade"))
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
     # TODO: Arrow navigation

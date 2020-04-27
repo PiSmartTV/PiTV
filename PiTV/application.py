@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 import sys
 import os
-from threading import Thread
-from screeninfo import get_monitors
+import json
+import pickle
+import time
 import requests
+from threading import Thread
+
+from screeninfo import get_monitors
 from weather import Weather
 from location import Location
 from utils import check_internet, check_server
 from sidebar import SideBar, ListTile, WeatherBox
 from category import Category
-import json
-import time
+
 
 # Bypass linters
 if True:
@@ -19,7 +22,7 @@ if True:
     from gi.repository import Gtk, GLib, Gio
 
 HOST = "https://pitv.herokuapp.com/"
-HOME_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 # CONFIG_DIR = os.path.join(HOME_DIR, ".config", "PiTV")
 CONFIG_DIR = "/tmp"
 # os.mkdir(CONFIG_DIR)
@@ -67,7 +70,7 @@ class PiTV(Gtk.Application):
         # Initializing builder and connecting signal
         self.builder = Gtk.Builder()
         self.builder.add_from_file(
-            os.path.join(HOME_DIR, "application.glade"))
+            os.path.join(ROOT_DIR, "application.glade"))
         self.builder.connect_signals(self)
 
         self.login_window = self.builder.get_object(
@@ -80,9 +83,19 @@ class PiTV(Gtk.Application):
         # Switched to heroku free plan
         # Switched to Azure donated by Maker NS
         self.host = HOST
+        self.skip_login = False
         self.fetch_weather = True
 
-        self.login_init()
+        # Session is required to store cookies
+        self.session = requests.session()
+        self.load_session()
+
+        if self.skip_login:
+            self.window = self.home_window
+            self.home_init()
+        else:
+            self.window = self.login_window
+            self.login_init()
 
         self.create_thread(self.recheck_network)
 
@@ -223,11 +236,21 @@ class PiTV(Gtk.Application):
         self.email = ""
         self.name = ""
 
-        # Session is required to store cookies
-        self.session = requests.session()
-
         self.create_thread(self.update_code)
         self.create_thread(self.update_progressbar)
+
+    def load_session(self):
+        cookies_dir = os.path.join(CONFIG_DIR, "cookies.txt")
+        if os.path.exists(cookies_dir):
+            with open(cookies_dir, 'rb') as file:
+                self.session.cookies = pickle.load(file)
+                self.skip_login = True
+
+    def save_session(self):
+        # Save cookies to CONFIG_DIR/cookies.txt
+        with open(os.path.join(CONFIG_DIR, "cookies.txt"), 'wb') as file:
+            pickle.dump(self.session.cookies, file)
+        # Rest of session settings goes here
 
     def update_progressbar(self):
         while not self.logged:
@@ -259,6 +282,7 @@ class PiTV(Gtk.Application):
             raw_post = self.session.post(HOST+"/code", data={"code": code})
             if raw_post.status_code == 200:
                 self.logged = True
+                self.save_session()
                 GLib.idle_add(self.switch_window, self.home_window)
                 GLib.idle_add(self.home_init)
                 return
@@ -381,6 +405,6 @@ class PiTV(Gtk.Application):
 
 if __name__ == "__main__":
     app = PiTV()
-    app.login_window.fullscreen()
-    app.login_window.show_all()
+    app.window.fullscreen()
+    app.window.show_all()
     Gtk.main()
