@@ -215,6 +215,8 @@ class PiTV(Gtk.Application):
         # Thats why it is set to 1
         self.stack_state = 1
 
+        self.logged = False
+
         # Default to empty string
         self.password = ""
         self.username = ""
@@ -225,6 +227,16 @@ class PiTV(Gtk.Application):
         self.session = requests.session()
 
         self.create_thread(self.update_code)
+        self.create_thread(self.update_progressbar)
+
+    def update_progressbar(self):
+        while not self.logged:
+            if hasattr(self, "end_time"):
+                fraction = (
+                    CODE_EXPIRE - self.end_time + time.time()
+                ) / CODE_EXPIRE
+                self.login_progress.set_fraction(fraction)
+                time.sleep(0.05)
 
     def update_code(self):
         print("Code update")
@@ -232,26 +244,21 @@ class PiTV(Gtk.Application):
         # Fetching login code from website
         raw_code = self.session.get(HOST+"/code")
 
-        # Calculate expire time by adding CODE_EXPIRE seconds to current time
-        end_time = time.time() + CODE_EXPIRE
-
         # TODO: Add logging here
         if not raw_code.status_code == 200:
             exit(1)
 
         code = json.loads(raw_code.text)["code"]
 
+        # Calculate expire time by adding CODE_EXPIRE seconds to current time
+        self.end_time = time.time() + CODE_EXPIRE
+
         self.code_label.set_label(code)
 
-        recheck_end_time = time.time() + 2
-
-        while end_time >= time.time():
-            fraction = (CODE_EXPIRE - (end_time - time.time())) / CODE_EXPIRE
-            self.login_progress.set_fraction(fraction)
-
+        while self.end_time >= time.time():
             raw_post = self.session.post(HOST+"/code", data={"code": code})
             if raw_post.status_code == 200:
-                print("good")
+                self.logged = True
                 GLib.idle_add(self.switch_window, self.home_window)
                 GLib.idle_add(self.home_init)
                 return
