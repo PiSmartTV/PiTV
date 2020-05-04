@@ -16,8 +16,11 @@ pip install -r requirements
 ```sh
 export OPEN_WEATHER_API_KEY="YOUR_OPEN_WEATHER_MAP_KEY_HERE"
 export UNIT_SYSTEM="metric"
-cd PiTV
-python3 application.py
+python3 PiTV/application.py
+```
+Or run it with defaults (no weather info)
+```sh
+python3 PiTV/application.py
 ```
 ## Contributing
 

@@ -7,32 +7,29 @@ import time
 import requests
 from threading import Thread
 
-from screeninfo import get_monitors
+from imdb import IMDb
+
 from weather import Weather
 from location import Location
 from utils import check_internet, check_server
 from sidebar import SideBar, ListTile, WeatherBox
 from category import Category
+from globals import *
+
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk, GLib, Gio
 
 
-# Bypass linters
-if True:
-    import gi
-    gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk, GLib, Gio
+if not os.path.exists(CONFIG_DIR):
+    os.mkdir(CONFIG_DIR)
 
-HOST = "https://pitv.herokuapp.com/"
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-# CONFIG_DIR = os.path.join(HOME_DIR, ".config", "PiTV")
-CONFIG_DIR = "/tmp"
-# os.mkdir(CONFIG_DIR)
+if not os.path.exists(CACHE_DIR):
+    os.mkdir(CACHE_DIR)
 
-MONITOR_WIDTH = get_monitors()[0].width
-MONITOR_HEIGHT = get_monitors()[0].height
-SIDEBAR_WIDTH = MONITOR_WIDTH/8
 
 # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
-REFRESH_MILLS = 12000
+REFRESH_MILLS = 120000
 
 # 60seconds
 CODE_EXPIRE = 60
@@ -58,8 +55,7 @@ SIDEBAR_ICONS = [
 
 class PiTV(Gtk.Application):
     def __init__(self):
-        Gtk.Application.__init__(
-            self,
+        super().__init__(
             application_id="org.grbavacigla.pitv",
             flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
         )
@@ -262,8 +258,6 @@ class PiTV(Gtk.Application):
                 time.sleep(0.05)
 
     def update_code(self):
-        print("Code update")
-
         # Fetching login code from website
         raw_code = self.session.get(HOST+"/code")
 
@@ -289,7 +283,7 @@ class PiTV(Gtk.Application):
             time.sleep(1)
 
         # Convert seconds to milliseconds
-        GLib.idle_add(self.create_thread(self.update_code))
+        GLib.idle_add(lambda: self.create_thread(self.update_code))
 
     def toggle_login_stack(self, *args):
 
@@ -404,7 +398,8 @@ class PiTV(Gtk.Application):
 
 
 if __name__ == "__main__":
+    Gtk.init()
     app = PiTV()
-    app.window.fullscreen()
+    # app.window.fullscreen()
     app.window.show_all()
     Gtk.main()
