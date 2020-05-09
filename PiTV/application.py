@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
+"""
+Main PiTV file, run this
+"""
+from globals import *
+from threading import Thread
 import sys
 import os
 import json
 import pickle
 import time
 import requests
-from threading import Thread
 
 from imdb import IMDb
 
-from weather import Weather
-from location import Location
-from utils import check_internet, check_server
-from sidebar import SideBar, ListTile, WeatherBox
 from category import Category
-from globals import *
+from sidebar import SideBar, ListTile, WeatherBox
+from utils import check_internet, check_server
+from location import Location
+from weather import Weather
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GLib, Gio
+from gi.repository import Gtk, GLib, Gio  # NOQA
 
 
 if not os.path.exists(CONFIG_DIR):
@@ -50,6 +53,13 @@ SIDEBAR_ICONS = [
     # "TV",
     # "Songs"
     "open-menu"
+]
+
+CATEGORIES = [
+    "get_popular100_movies",
+    "get_popular100_tv",
+    "get_top250_movies",
+    "get_top250_tv"
 ]
 
 
@@ -164,10 +174,9 @@ class PiTV(Gtk.Application):
         for i in range(sidebar_len):
             self.sidebar.add_action(SIDEBAR_LABELS[i], SIDEBAR_ICONS[i])
 
-        for i in range(10):
-            cat = Category()
-            self.category_view.pack_start(cat, False, False, 6)
-            cat.show()
+        for i in CATEGORIES:
+            temp_cat = Category(i)
+            self.category_view.pack_start(temp_cat, False, False, 6)
 
         # Fetch location
         self.location_info = Location()
@@ -263,7 +272,7 @@ class PiTV(Gtk.Application):
 
         # TODO: Add logging here
         if not raw_code.status_code == 200:
-            exit(1)
+            sys.exit(1)
 
         code = json.loads(raw_code.text)["code"]
 
@@ -371,7 +380,6 @@ class PiTV(Gtk.Application):
         self.network_state = check_server()
 
         if self.retype_password != self.password:
-
             return
 
         if self.network_state:
@@ -400,6 +408,6 @@ class PiTV(Gtk.Application):
 if __name__ == "__main__":
     Gtk.init()
     app = PiTV()
-    # app.window.fullscreen()
+    app.window.fullscreen()
     app.window.show_all()
     Gtk.main()

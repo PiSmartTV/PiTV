@@ -3,7 +3,7 @@ from pathlib import Path
 from screeninfo import get_monitors
 
 ROOT_DIR = path.dirname(path.abspath(__file__))
-HOST = "https://pitv.herokuapp.com/"
+HOST = "https://pitv.cf/"
 HOME_DIR = str(Path.home())
 CONFIG_DIR = path.join(HOME_DIR, ".config", "PiTV")
 CACHE_DIR = path.join(HOME_DIR, ".cache", "PiTV")

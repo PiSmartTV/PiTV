@@ -1,3 +1,4 @@
+"""This will be rewritten."""
 import sqlite3
 
 CREATE_TABLE = \
@@ -21,7 +22,7 @@ TABLES = "PRAGMA table_info(users);"
 
 
 class UserSettings(sqlite3.Connection):
-    """Saves user settings to database
+    """Save user settings to database.
 
     :param username: username
     :param location: full path to save the database
@@ -56,7 +57,7 @@ class UserSettings(sqlite3.Connection):
         return TYPES[val_type] if val_type in TYPES.keys() else "BLOB"
 
     def set(self, col, value):
-        """Sets a value for setting
+        """Set a value for setting.
 
         :param col: setting
         :param value: value for setting
@@ -64,7 +65,7 @@ class UserSettings(sqlite3.Connection):
         """
         columns = [i[1] for i in self.cursor.execute(TABLES)]
 
-        if not col in columns:
+        if col not in columns:
             self.cursor.execute(
                 f"ALTER TABLE users ADD COLUMN {col} {self._get_type(value)}"
             )
@@ -75,7 +76,7 @@ class UserSettings(sqlite3.Connection):
         )
 
     def setsave(self, col, value):
-        """Sets a value for setting
+        """Set a value for setting.
 
         :param col: setting
         :param value: value for setting
@@ -85,5 +86,5 @@ class UserSettings(sqlite3.Connection):
         self.save()
 
     def save(self):
-        """Saves changes to the database"""
+        """Save changes to the database."""
         self.commit()
