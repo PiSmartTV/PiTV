@@ -1,3 +1,2 @@
-screeninfo
 git+https://github.com/alberanid/imdbpy
 requests

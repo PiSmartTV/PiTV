@@ -1,14 +1,14 @@
 """Category and ImageTile template, depends on category.glade, image_tile.glade."""
-import os
-import imdb
+from utils import cache_file
+from globals import ROOT_DIR
 from threading import Thread
+import os
+import re
 
+import imdb
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, GdkPixbuf, GLib  # NOQA
-
-from globals import ROOT_DIR  # NOQA
-from utils import cache_file  # NOQA
 
 
 @Gtk.Template(filename=os.path.join(ROOT_DIR, "image_tile.glade"))
@@ -40,12 +40,15 @@ class Category(Gtk.Box):
         self.limit = limit
 
         # TODO: This is really bad solution fix this as soon as possible
-        self.scroll_view = self.get_children()[1]
+        self.title, self.scroll_view = self.get_children()
         self.box = self.scroll_view.get_children()[0].get_children()[0]
 
         self.box.set_focus_hadjustment(self.scroll_view.get_hadjustment())
         self.tiles = []
         self.thread_list = []
+
+        # regex = re.findall(r"(?!get)([a-z]+)", fetch_type)
+        # print(regex, fetch_type)
 
         for _ in range(limit):
             temp_it = ImageTile()
@@ -63,7 +66,6 @@ class Category(Gtk.Box):
         image_tile.name = movie["title"]
         image_sized = ".".join(movie["full-size cover url"].split(".")[:-1])
         image_sized += "._V1_SY350_.jpg"
-        print(image_sized)
 
         filename = cache_file(image_sized, movie.getID()+".jpg")
         # pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 236, 350)
