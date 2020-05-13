@@ -7,7 +7,7 @@ You will need to make [OpenWeatherMap](https://home.openweathermap.org/users/sig
 ```sh
 git clone https://www.github.com/PiSmartTV/PiTV.git
 cd PiTV
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 
