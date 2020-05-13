@@ -22,6 +22,11 @@ Or run it with defaults (no weather info)
 ```sh
 python3 PiTV/application.py
 ```
+
+## Screenshots
+![](screenshots/Code.png?raw=true)
+![](screenshots/Trending.png?raw=true)
+
 ## Contributing
 
 ```sh
