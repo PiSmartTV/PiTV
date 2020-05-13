@@ -33,7 +33,7 @@ class ImageTile(Gtk.Button):
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
 
-    def __init__(self, fetch_type, limit=10, **kwargs):
+    def __init__(self, fetch_type, limit=20, **kwargs):
         super().__init__(**kwargs)
 
         self.fetch_type = fetch_type
@@ -84,7 +84,8 @@ class Category(Gtk.Box):
 
         for i, img_tile in enumerate(self.tiles):
             movie = self.fetched_data[i]
-            GLib.idle_add(self.update_imagetile, img_tile, movie)
+            self._update_imagetile(img_tile, movie)
+            #GLib.idle_add(self.update_imagetile, img_tile, movie)
 
     def fetch_data(self):
         self.create_thread(self._fetch_data)
