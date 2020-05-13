@@ -7,7 +7,7 @@ You will need to make [OpenWeatherMap](https://home.openweathermap.org/users/sig
 ```sh
 git clone https://www.github.com/PiSmartTV/PiTV.git
 cd PiTV
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 
@@ -22,6 +22,11 @@ Or run it with defaults (no weather info)
 ```sh
 python3 PiTV/application.py
 ```
+
+## Screenshots
+![](screenshots/Code.png?raw=true)
+![](screenshots/Trending.png?raw=true)
+
 ## Contributing
 
 ```sh
