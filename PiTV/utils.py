@@ -2,7 +2,7 @@
 import socket
 import os
 import requests
-from globals import CACHE_DIR, HOST
+from globals import CACHE_DIR, HOST, ROOT_DIR
 
 
 def check_internet(host="8.8.8.8", port=53, timeout=3):
@@ -57,7 +57,9 @@ def cache_file(url, filename):
     filepath = os.path.join(CACHE_DIR, filename)
 
     if os.path.exists(filepath):
+        print("Exists")
         return filepath
+    print("Doesn't exist")
 
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
@@ -65,3 +67,13 @@ def cache_file(url, filename):
             for chunk in r.iter_content(chunk_size=4096):
                 f.write(chunk)
     return filepath
+
+
+def rel_path(filename):
+    """Get path of filename.
+
+    :param filename: Name of file relative to ROOT_DIR
+    :returns: absolute path to file
+    """
+
+    return os.path.join(ROOT_DIR, filename)

@@ -10,12 +10,13 @@ import json
 import pickle
 import time
 import requests
+import logging
 
 from imdb import IMDb
 
 from category import Category
 from sidebar import SideBar, ListTile, WeatherBox
-from utils import check_internet, check_server
+from utils import check_internet, check_server, rel_path
 from location import Location
 from weather import Weather
 
@@ -30,6 +31,8 @@ if not os.path.exists(CONFIG_DIR):
 if not os.path.exists(CACHE_DIR):
     os.mkdir(CACHE_DIR)
 
+# Logging settings
+logging.basicConfig(level=logging.INFO)
 
 # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
 REFRESH_MILLS = 120000
@@ -73,10 +76,16 @@ class PiTV(Gtk.Application):
         GLib.set_application_name("PiTV")
         GLib.set_prgname("pitv")
 
-        # Initializing builder and connecting signal
+        # Initializing builder
+        logging.info("Initiating builder")  # Logger
         self.builder = Gtk.Builder()
-        self.builder.add_from_file(
-            os.path.join(ROOT_DIR, "application.glade"))
+
+        # Adding UI file to builder
+        logging.info("Adding UI file to builder")  # Logger
+        self.builder.add_from_file(rel_path("application.glade"))
+
+        # Connecting signals
+        logging.info("Connecting signals")  # Logger
         self.builder.connect_signals(self)
 
         self.login_window = self.builder.get_object(

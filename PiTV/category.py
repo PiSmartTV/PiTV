@@ -16,7 +16,7 @@ class ImageTile(Gtk.Button):
     __gtype_name__ = "ImageTile"
 
     name = ""
-    image_pixbuf = None
+    image_location = ""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -26,14 +26,14 @@ class ImageTile(Gtk.Button):
 
     def draw(self):
         self.label.set_label(self.name)
-        self.image.set_from_pixbuf(self.image_pixbuf)
+        self.image.set_from_file(self.image_location)
 
 
 @Gtk.Template(filename=os.path.join(ROOT_DIR, "category.glade"))
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
 
-    def __init__(self, fetch_type, limit=20, **kwargs):
+    def __init__(self, fetch_type, limit=10, **kwargs):
         super().__init__(**kwargs)
 
         self.fetch_type = fetch_type
@@ -68,10 +68,7 @@ class Category(Gtk.Box):
         image_sized += "._V1_SY350_.jpg"
 
         filename = cache_file(image_sized, movie.getID()+".jpg")
-        # pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename, 236, 350)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename)
-        image_tile.image_pixbuf = pixbuf
-
+        image_tile.image_location = filename
         image_tile.draw()
 
     def create_thread(self, target, *args):
