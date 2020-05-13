@@ -318,7 +318,8 @@ class PiTV(Gtk.Application):
 
     def validate_login(self):
         # TODO: Add more response error for user to know what to do
-        self.network_state = check_server()
+        # self.network_state = check_server()
+        self.network_state = True
 
         if self.network_state:
             try:
@@ -386,7 +387,8 @@ class PiTV(Gtk.Application):
 
     def validate_signup(self):
         # TODO: Add more response error for user to know what to do
-        self.network_state = check_server()
+        # self.network_state = check_server()
+        self.network_state = True
 
         if self.retype_password != self.password:
             return

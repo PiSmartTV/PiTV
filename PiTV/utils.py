@@ -25,7 +25,7 @@ def check_internet(host="8.8.8.8", port=53, timeout=3):
 def check_server(timeout=3):
     """Check if PiTV server is up.
 
-    :param timeout: maximum retries (Defaukt value = 3) (Default value = 3)
+    :param timeout: maximum retries (Default value = 3)
     :returns: bool
 
     """
