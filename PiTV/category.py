@@ -33,22 +33,23 @@ class ImageTile(Gtk.Button):
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
 
-    def __init__(self, fetch_type, limit=20, **kwargs):
+    def __init__(self, fetch_type, limit=12, **kwargs):
         super().__init__(**kwargs)
 
         self.fetch_type = fetch_type
         self.limit = limit
 
+        self.cat_title = ' '.join(re.findall("[^(get)]([a-z]+)", fetch_type))
+
         # TODO: This is really bad solution fix this as soon as possible
         self.title, self.scroll_view = self.get_children()
         self.box = self.scroll_view.get_children()[0].get_children()[0]
 
+        self.title.set_label(self.cat_title.capitalize())
+
         self.box.set_focus_hadjustment(self.scroll_view.get_hadjustment())
         self.tiles = []
         self.thread_list = []
-
-        # regex = re.findall(r"(?!get)([a-z]+)", fetch_type)
-        # print(regex, fetch_type)
 
         for _ in range(limit):
             temp_it = ImageTile()
@@ -84,7 +85,10 @@ class Category(Gtk.Box):
 
         for i, img_tile in enumerate(self.tiles):
             movie = self.fetched_data[i]
-            self._update_imagetile(img_tile, movie)
+            try:
+                self._update_imagetile(img_tile, movie)
+            except:
+                continue
             #GLib.idle_add(self.update_imagetile, img_tile, movie)
 
     def fetch_data(self):
