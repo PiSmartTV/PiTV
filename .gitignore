@@ -132,3 +132,4 @@ dmypy.json
 run_env.sh
 .vscode
 PiTV/test.py
+.buildconfig

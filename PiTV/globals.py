@@ -11,7 +11,7 @@ from gi.repository import Gdk  # NOQA
 screen = Gdk.Screen.get_default()
 
 ROOT_DIR = path.dirname(path.abspath(__file__))
-HOST = "https://pitv.cf"
+HOST = "https://pitv.herokuapp.com"
 HOME_DIR = str(Path.home())
 CONFIG_DIR = path.join(HOME_DIR, ".config", "PiTV")
 CACHE_DIR = path.join(HOME_DIR, ".cache", "PiTV")
