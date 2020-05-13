@@ -327,6 +327,9 @@ class PiTV(Gtk.Application):
                     "username": self.username,
                     "password": self.password
                 })
+
+                self.save_session()
+                self.logged = True
             except Exception as exception:
                 self.login_error_label.set_visible(True)
                 self.login_error_label.set_text(
