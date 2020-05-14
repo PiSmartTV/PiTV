@@ -1,0 +1,42 @@
+{
+	"settings":[
+		{
+			"General":[
+				{
+					"Unit system":
+					{
+						"default":0,
+						"value":0,
+						"type": "ComboBox",
+						"available": ["metric", "imperial"]
+					}
+				}
+
+			]
+
+		},
+		{
+			"Appearance":
+			[
+				{
+					"UI Theme":
+					{
+						"default": 0,
+						"value": 0,
+						"type": "ComboBox",
+						"available": "for i in $(echo ${XDG_DATA_DIRS} | tr ':' '\n'); do ls -1 $i/themes 2>/dev/null; done"
+					}
+				}
+				{
+					"Icon Theme":
+					{
+						"default": 0,
+						"value": 0,
+						"type": "ComboBox",
+						"available": "for i in $(echo ${XDG_DATA_DIRS} | tr ':' '\n'); do ls -1 $i/icons 2>/dev/null; done"
+					}
+				}
+			]
+		}
+	]
+}

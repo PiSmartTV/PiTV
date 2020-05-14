@@ -5,10 +5,17 @@ This file is the worst
 """
 from globals import ROOT_DIR
 import os
+import json
 
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk  # NOQA
+
+
+def load_settings(filepath):
+	with open(filepath, "r") as file:
+		raw_json = file.read()
+	return json.loads(raw_json)["settings"]
 
 
 @Gtk.Template(filename=os.path.join(ROOT_DIR, "settings_view.glade"))

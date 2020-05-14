@@ -173,7 +173,7 @@ class PiTV(Gtk.Application):
             self.unit_system = "metric"
 
         if not self.openweather_apikey:
-            loggin.warnging("No OpenWeather api key found")
+            logging.warning("No OpenWeather api key found")
             self.fetch_weather = False
 
         # Setting weather_info to None
