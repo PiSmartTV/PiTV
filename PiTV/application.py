@@ -32,7 +32,7 @@ if not os.path.exists(CACHE_DIR):
     os.mkdir(CACHE_DIR)
 
 # Logging settings
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
 REFRESH_MILLS = 120000
@@ -77,15 +77,15 @@ class PiTV(Gtk.Application):
         GLib.set_prgname("pitv")
 
         # Initializing builder
-        logging.info("Initiating builder")  # Logger
+        logging.debug("Initiating builder")  # Logger
         self.builder = Gtk.Builder()
 
         # Adding UI file to builder
-        logging.info("Adding UI file to builder")  # Logger
+        logging.debug("Adding UI file to builder")  # Logger
         self.builder.add_from_file(rel_path("application.glade"))
 
         # Connecting signals
-        logging.info("Connecting signals")  # Logger
+        logging.debug("Connecting signals")  # Logger
         self.builder.connect_signals(self)
 
         self.login_window = self.builder.get_object(
@@ -102,22 +102,24 @@ class PiTV(Gtk.Application):
         self.fetch_weather = True
 
         # Session is required to store cookies
+        logging.info("Creating browser session")
         self.session = requests.session()
         self.load_session()
 
         if self.skip_login:
+            logging.info("Skipping login because cookies exist")
             self.window = self.home_window
             self.home_init()
         else:
+            logging.info("Couldn't find cookies, cannot skip login")
             self.window = self.login_window
             self.login_init()
 
-        self.create_thread(self.recheck_network)
+        # self.create_thread(self.recheck_network)
 
     def home_refresh(self):
         # Fetch weather info
         # TODO:Prompt user for his openweathermap api key
-
         if self.fetch_weather:
             if not self.weather_info:
                 self.weather_info = Weather(
@@ -161,14 +163,17 @@ class PiTV(Gtk.Application):
         self.home_divider.reorder_child(self.sidebar, 0)
 
         # Fetch some environment variables
+        logging.debug("Fetching UNIT_SYSTEM and OPEN_WEATHER_API_KEY")
         self.openweather_apikey = os.environ.get("OPEN_WEATHER_API_KEY")
         self.unit_system = os.environ.get("UNIT_SYSTEM")
 
         # Check if they are empty
         if not self.unit_system:
+            logging.warning("Defaulting unit system to metric")
             self.unit_system = "metric"
 
         if not self.openweather_apikey:
+            loggin.warnging("No OpenWeather api key found")
             self.fetch_weather = False
 
         # Setting weather_info to None
@@ -179,27 +184,33 @@ class PiTV(Gtk.Application):
         self.sidebar.add_start_widget(self.weather_box)
 
         # Populate the list with sidebar actions
+        logging.info("Populating sidebar")
         sidebar_len = len(SIDEBAR_LABELS)
         for i in range(sidebar_len):
             self.sidebar.add_action(SIDEBAR_LABELS[i], SIDEBAR_ICONS[i])
 
+        logging.info("Creating categories")
         for i in CATEGORIES:
             temp_cat = Category(i)
             self.category_view.pack_start(temp_cat, False, False, 6)
 
         # Fetch location
+        logging.info("Fetching location for weather")
         self.location_info = Location()
 
         # Make formatted location for open weather map
+        logging.info("Formatting location")
         self.city_and_country = "{},{}".format(
             self.location_info.city,
             self.location_info.country_code
         )
 
         # Fetch all data that needs to be refreshed every 2 minutes
+        logging.info("Calling home refresh")
         self.create_thread(self.home_refresh)
 
         # 60*2*1000=120000 Why? 1000 miliseconds is 1 second, we need 2 minutes
+        logging.info("Setting timeout for refresh to %s", REFRESH_MILLS)
         GLib.timeout_add(
             REFRESH_MILLS,
             lambda: self.create_thread(self.home_refresh)

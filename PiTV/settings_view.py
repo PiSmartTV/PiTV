@@ -11,24 +11,6 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk  # NOQA
 
 
-settings = ["te"]
-
-
-class Setting:
-    name = None
-    default = None
-    available = None
-    value = None
-    type = ""
-
-    def __init__(self, name, type, default, value=None, available=None):
-        self.name = name
-        self.type = type
-        self.default = default
-        self.value = value if value else default
-        self.available = available
-
-
 @Gtk.Template(filename=os.path.join(ROOT_DIR, "settings_view.glade"))
 class SettingsView(Gtk.Box):
     __gtype_name__ = 'SettingsView'
