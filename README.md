@@ -2,8 +2,10 @@
 New version of SmartTV. Better code, faster, optimized.
 
 ## Installation
+It is advised to use numix icon theme, because that will be default.<br />
+Here I am using canta theme, but it works on any theme
 
-You will need to make [OpenWeatherMap](https://home.openweathermap.org/users/sign_up) account
+If you want weather, you have to have [OpenWeatherMap](https://home.openweathermap.org/users/sign_up) account
 ```sh
 git clone https://www.github.com/PiSmartTV/PiTV.git
 cd PiTV
