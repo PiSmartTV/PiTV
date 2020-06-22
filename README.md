@@ -26,6 +26,7 @@ python3 PiTV/application.py
 ```
 
 ## Screenshots
+Default theme is Canta by vinceliuice: https://github.com/vinceliuice/Canta-theme
 ![](screenshots/Code.png?raw=true)
 ![](screenshots/Trending.png?raw=true)
 
