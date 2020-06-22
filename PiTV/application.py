@@ -19,6 +19,7 @@ from sidebar import SideBar, ListTile, WeatherBox
 from utils import check_internet, check_server, rel_path
 from location import Location
 from weather import Weather
+import ftp_server
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -215,6 +216,10 @@ class PiTV(Gtk.Application):
             REFRESH_MILLS,
             lambda: self.create_thread(self.home_refresh)
         )
+
+        if USE_FTP_SERVER:
+            self.ftp_server = ftp_server.FTPThread()
+            self.ftp_server.start()
 
     def create_thread(self, target, *args):
         thread = Thread(target=target, args=args)
