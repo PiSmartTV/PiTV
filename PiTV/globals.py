@@ -11,10 +11,11 @@ from gi.repository import Gdk  # NOQA
 screen = Gdk.Screen.get_default()
 
 ROOT_DIR = path.dirname(path.abspath(__file__))
-HOST = "http://127.0.0.1:8000"
+HOST = "htts://pitv.cf"
 HOME_DIR = str(Path.home())
 CONFIG_DIR = path.join(HOME_DIR, ".config", "PiTV")
 CACHE_DIR = path.join(HOME_DIR, ".cache", "PiTV")
 MONITOR_WIDTH = screen.get_width()
 MONITOR_HEIGHT = screen.get_height()
 SIDEBAR_WIDTH = MONITOR_WIDTH/8
+USE_FTP_SERVER = True
