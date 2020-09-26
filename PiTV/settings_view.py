@@ -3,7 +3,7 @@ SettingsView, SettingsRow template for PiTV, depends on settings_view.glade
 TODO: Make this file better coded, add comments, fix issues
 This file is the worst
 """
-from globals import ROOT_DIR
+from config import ROOT_DIR
 import os
 import json
 

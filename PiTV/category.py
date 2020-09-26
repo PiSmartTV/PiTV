@@ -1,6 +1,6 @@
 """Category and ImageTile template, depends on category.glade, image_tile.glade."""
 from utils import cache_file
-from globals import ROOT_DIR
+from config import ROOT_DIR
 from threading import Thread
 import os
 import re

@@ -2,7 +2,7 @@
 """
 Main PiTV file, run this
 """
-from globals import *
+from config import *
 from threading import Thread
 import sys
 import os

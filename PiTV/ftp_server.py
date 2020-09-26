@@ -13,11 +13,11 @@ class FTPThread(Thread):
         self.setName("FTP Daemon")
 
         self.authorizer = UnixAuthorizer(
-            rejected_users=["root"], require_valid_shell=True)
+            rejected_users=["root"])
         self.handler = FTPHandler
         self.handler.authorizer = self.authorizer
         self.handler.abstracted_fs = UnixFilesystem
-        self.server = FTPServer(('127.0.0.1', 21), self.handler)
+        self.server = FTPServer(('127.0.0.1', 10021), self.handler)
 
     def serve_forever(self):
         self.server.serve_forever()
