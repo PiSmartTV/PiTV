@@ -1,5 +1,6 @@
 """
-Sidebar, ListTile and WeatherBox template for PiTV, depends on sidebar.glade, weather_box.glade, list_tile.glade
+Sidebar, ListTile and WeatherBox template for PiTV,
+depends on sidebar.glade, weather_box.glade, list_tile.glade
 """
 import os
 
@@ -76,7 +77,7 @@ class SideBar(Gtk.Box):
         # Add tile to action widgets
         self.add_action_widget(tile)
 
-    def on_sidebar_row_selected(self, listbox, listbox_row):
+    def on_sidebar_row_selected(self, _, listbox_row):
         # Connected to row_select of self.actions
         # Switch to stack to index of selected self.actions row
         index = listbox_row.get_index()
@@ -134,15 +135,15 @@ class WeatherBox(Gtk.Box):
             # Set image to missing if None
             if not self.icon_name:
                 self.icon_name = "image-missing"
-    
+
             # Changing the label to data in public variables icon_name and width
             self.image.set_from_icon_name(self.icon_name, self.width)
         else:
             self.label.set_label("?"+chr(176)+"?")
             self.image.set_from_icon_name("image-loading", self.width)
 
-    def show(self):
-        super().__init__()
+    def show(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.image.show()
         self.label.show()
 

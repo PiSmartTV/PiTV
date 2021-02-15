@@ -61,11 +61,11 @@ def cache_file(url, filename):
         return filepath
     print("Doesn't exist")
 
-    with requests.get(url, stream=True) as r:
-        r.raise_for_status()
-        with open(filepath, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=4096):
-                f.write(chunk)
+    with requests.get(url, stream=True) as resp:
+        resp.raise_for_status()
+        with open(filepath, 'wb') as file:
+            for chunk in resp.iter_content(chunk_size=4096):
+                file.write(chunk)
     return filepath
 
 
