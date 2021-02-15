@@ -293,7 +293,7 @@ class PiTV(Gtk.Application):
 
     def update_code(self):
         # Fetching login code from website
-        raw_code = self.session.get(HOST+"/code")
+        raw_code = self.session.get(HOST+"/api/code")
 
         # TODO: Add logging here
         if not raw_code.status_code == 200:
@@ -307,7 +307,7 @@ class PiTV(Gtk.Application):
         self.code_label.set_label(code)
 
         while self.end_time >= time.time():
-            raw_post = self.session.post(HOST+"/code", data={"code": code})
+            raw_post = self.session.post(HOST+"/api/code", data={"code": code})
             if raw_post.status_code == 200:
                 self.logged = True
                 self.save_session()
