@@ -57,9 +57,7 @@ def cache_file(url, filename):
     filepath = os.path.join(CACHE_DIR, filename)
 
     if os.path.exists(filepath):
-        print("Exists")
         return filepath
-    print("Doesn't exist")
 
     with requests.get(url, stream=True) as resp:
         resp.raise_for_status()
