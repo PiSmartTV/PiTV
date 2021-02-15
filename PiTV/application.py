@@ -98,9 +98,9 @@ class PiTV(Gtk.Application):
         # localhost is development sollution)
         # Switched to heroku free plan
         # Switched to Azure donated by Maker NS
+        # Again, my website is homeless :(
         self.host = HOST
         self.skip_login = False
-        self.fetch_weather = True
 
         # Session is required to store cookies
         logging.info("Creating browser session")
@@ -121,21 +121,20 @@ class PiTV(Gtk.Application):
     def home_refresh(self):
         # Fetch weather info
         # TODO:Prompt user for his openweathermap api key
-        if self.fetch_weather:
-            if not self.weather_info:
-                self.weather_info = Weather(
-                    self.openweather_apikey,
-                    self.unit_system,
-                    self.city_and_country
-                )
-                self.weather_box.set_weather_object(
-                    self.weather_info,
-                    update=True
-                )
+        if not self.weather_info:
+            self.weather_info = Weather(
+                self.unit_system,
+                self.location_info,
+                self.openweather_apikey
+            )
+            self.weather_box.set_weather_object(
+                self.weather_info,
+                update=True
+            )
 
-            else:
-                self.weather_box.update_data()
-                self.weather_box.refresh()
+        else:
+            self.weather_box.update_data()
+            self.weather_box.refresh()
 
         GLib.timeout_add(
             REFRESH_MILLS,
@@ -174,8 +173,7 @@ class PiTV(Gtk.Application):
             self.unit_system = "metric"
 
         if not self.openweather_apikey:
-            logging.warning("No OpenWeather api key found")
-            self.fetch_weather = False
+            logging.warning("No OpenWeather api key found. Using 7Timer!.")
 
         # Setting weather_info to None
         self.weather_info = None
@@ -198,13 +196,6 @@ class PiTV(Gtk.Application):
         # Fetch location
         logging.info("Fetching location for weather")
         self.location_info = Location()
-
-        # Make formatted location for open weather map
-        logging.info("Formatting location")
-        self.city_and_country = "{},{}".format(
-            self.location_info.city,
-            self.location_info.country_code
-        )
 
         # Fetch all data that needs to be refreshed every 2 minutes
         logging.info("Calling home refresh")

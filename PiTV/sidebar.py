@@ -95,7 +95,7 @@ class WeatherBox(Gtk.Box):
         self.weather_object = weather_object
         if weather_object:
             self.temperature = self.weather_object.temperature
-            self.icon_name = CONDITIONS[self.weather_object.icon_code]
+            self.icon_name = CONDITIONS.get(self.weather_object.icon_code)
 
         self.width = width
 
@@ -119,7 +119,7 @@ class WeatherBox(Gtk.Box):
 
             # Setting the data
             self.temperature = self.weather_object.temperature
-            self.icon_name = CONDITIONS[self.weather_object.icon_code]
+            self.icon_name = CONDITIONS.get(self.weather_object.icon_code)
 
     def refresh(self):
         # Checking if weather_object exists
@@ -131,6 +131,10 @@ class WeatherBox(Gtk.Box):
                 UNITS[self.weather_object.measure]["temperature"]
             )
 
+            # Set image to missing if None
+            if not self.icon_name:
+                self.icon_name = "image-missing"
+    
             # Changing the label to data in public variables icon_name and width
             self.image.set_from_icon_name(self.icon_name, self.width)
         else:
