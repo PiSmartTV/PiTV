@@ -15,7 +15,7 @@ def getLocalIP():
 
 class Location:
     def __init__(self):
-        self.location_info = loads(get("http://ip-api.com/json/").text)
+        self.location_info = loads(get("https://freegeoip.app/json/").text)
 
     @property
     def city(self):
@@ -23,20 +23,28 @@ class Location:
 
     @property
     def public_ip(self):
-        return self.location_info["query"]
+        return self.location_info["ip"]
 
     @property
     def timezone(self):
-        return self.location_info["timezone"]
+        return self.location_info["time_zone"]
 
     @property
     def country(self):
-        return self.location_info["country"]
+        return self.location_info["country_name"]
 
     @property
     def country_code(self):
-        return self.location_info["countryCode"]
+        return self.location_info["country_code"]
 
     @property
     def region(self):
-        return self.location_info["regionName"]
+        return self.location_info["region_name"]
+
+    @property
+    def longitude(self):
+        return self.location_info["longitude"]
+    
+    @property
+    def latitude(self):
+        return self.location_info["latitude"]

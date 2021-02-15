@@ -308,7 +308,7 @@ class PiTV(Gtk.Application):
 
         while self.end_time >= time.time():
             raw_post = self.session.post(HOST+"/api/code/", data={"code": code})
-            if raw_post.status_code == 200:
+            if raw_post.ok:
                 self.logged = True
                 self.save_session()
                 GLib.idle_add(self.switch_window, self.home_window)
