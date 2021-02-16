@@ -68,11 +68,12 @@ class Category(Gtk.Box):
         if not is_cached(filename):
             self._imdb.update(movie)
 
-            image_tile.name = movie["title"]
             image_sized = ".".join(movie["full-size cover url"].split(".")[:-1])
             image_sized += "._V1_SY350_.jpg"
 
         filename = cache_file(image_sized, filename)
+        
+        image_tile.name = movie["title"]
         image_tile.image_location = filename
         image_tile.draw()
 
