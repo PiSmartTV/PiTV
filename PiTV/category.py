@@ -1,5 +1,5 @@
 """Category and ImageTile template, depends on category.glade, image_tile.glade."""
-from utils import cache_file
+from utils import cache_file, is_cached
 from config import ROOT_DIR
 from threading import Thread
 import os
@@ -62,13 +62,17 @@ class Category(Gtk.Box):
         self.create_thread(self._update_imagetile, image_tile, movie)
 
     def _update_imagetile(self, image_tile, movie):
-        self._imdb.update(movie)
+        filename = movie.getID()+".jpg"
 
-        image_tile.name = movie["title"]
-        image_sized = ".".join(movie["full-size cover url"].split(".")[:-1])
-        image_sized += "._V1_SY350_.jpg"
+        image_sized = ""
+        if not is_cached(filename):
+            self._imdb.update(movie)
 
-        filename = cache_file(image_sized, movie.getID()+".jpg")
+            image_tile.name = movie["title"]
+            image_sized = ".".join(movie["full-size cover url"].split(".")[:-1])
+            image_sized += "._V1_SY350_.jpg"
+
+        filename = cache_file(image_sized, filename)
         image_tile.image_location = filename
         image_tile.draw()
 

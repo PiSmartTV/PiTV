@@ -67,6 +67,24 @@ def cache_file(url, filename):
     return filepath
 
 
+def is_cached(filename):
+    """Check if file is cached.
+
+    :param filename: Name of file relative to CACHE_DIR
+    :returns bool
+    """
+
+    if not os.path.isdir(CACHE_DIR):
+        os.mkdir(CACHE_DIR)
+
+    filepath = os.path.join(CACHE_DIR, filename)
+
+    if os.path.exists(filepath):
+        return True
+
+    return False
+
+
 def rel_path(filename):
     """Get path of filename.
 
