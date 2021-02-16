@@ -2,7 +2,6 @@
 """
 Main PiTV file, run this
 """
-from config import *
 from threading import Thread
 import sys
 import os
@@ -15,10 +14,11 @@ import logging
 from imdb import IMDb
 
 from category import Category
-from sidebar import SideBar, ListTile, WeatherBox
-from utils import check_internet, check_server, rel_path
+from sidebar import SideBar, WeatherBox
+from utils import check_internet, rel_path
 from location import Location
 from weather import Weather
+from config import *
 import ftp_server
 
 import gi
@@ -105,6 +105,9 @@ class PiTV(Gtk.Application):
         # Session is required to store cookies
         logging.info("Creating browser session")
         self.session = requests.session()
+        self.session.headers = {
+            "User-Agent": USER_AGENT
+        }
         self.load_session()
 
         if self.skip_login:

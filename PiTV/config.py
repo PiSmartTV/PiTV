@@ -19,3 +19,4 @@ MONITOR_WIDTH = screen.get_width()
 MONITOR_HEIGHT = screen.get_height()
 SIDEBAR_WIDTH = MONITOR_WIDTH/8
 USE_FTP_SERVER = False
+USER_AGENT = "PiTV/0.0.1 (Linux)"
