@@ -4,7 +4,7 @@ Class for weather data.
 from json import loads
 
 from requests import get
-from location import Location
+from .location import Location
 
 
 class Weather:

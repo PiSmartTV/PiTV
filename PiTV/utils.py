@@ -2,7 +2,7 @@
 import socket
 import os
 import requests
-from config import CACHE_DIR, HOST, ROOT_DIR
+from .config import CACHE_DIR, HOST, ROOT_DIR
 
 
 def check_internet(host="8.8.8.8", port=53, timeout=3):

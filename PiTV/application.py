@@ -13,13 +13,13 @@ import logging
 
 from imdb import IMDb
 
-from category import Category
-from sidebar import SideBar, WeatherBox
-from utils import check_internet, rel_path
-from location import Location
-from weather import Weather
-from config import *
-import ftp_server
+from .category import Category
+from .sidebar import SideBar, WeatherBox
+from .utils import check_internet, rel_path
+from .location import Location
+from .weather import Weather
+from .config import *
+from . import ftp_server
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -429,9 +429,4 @@ class PiTV(Gtk.Application):
         self.signup_spinner.set_visible(False)
 
 
-if __name__ == "__main__":
-    Gtk.init()
-    app = PiTV()
-    app.window.fullscreen()
-    app.window.show_all()
-    Gtk.main()
+
