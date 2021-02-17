@@ -13,8 +13,8 @@ import logging
 
 from imdb import IMDb
 
-from .category import Category
-from .sidebar import SideBar, WeatherBox
+from .widgets.category import Category
+from .widgets.sidebar import SideBar, WeatherBox
 from .utils import check_internet, rel_path
 from .location import Location
 from .weather import Weather
@@ -83,7 +83,9 @@ class PiTV(Gtk.Application):
 
         # Adding UI file to builder
         logging.debug("Adding UI file to builder")  # Logger
-        self.builder.add_from_file(rel_path("application.glade"))
+        self.builder.add_from_file(rel_path(
+            os.path.join("ui", "application.glade")
+        ))
 
         # Connecting signals
         logging.debug("Connecting signals")  # Logger

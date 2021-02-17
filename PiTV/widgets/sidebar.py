@@ -10,7 +10,7 @@ if True:
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
 
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+from ..config import ROOT_DIR
 
 CONDITIONS = {
     "01d": "weather-clear",
@@ -39,7 +39,7 @@ UNITS = {
 }
 
 
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "sidebar.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "sidebar.glade"))
 class SideBar(Gtk.Box):
     __gtype_name__ = 'SideBar'
 
@@ -85,7 +85,7 @@ class SideBar(Gtk.Box):
         self.stack.set_visible_child(children[index])
 
 
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "weather_box.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "weather_box.glade"))
 class WeatherBox(Gtk.Box):
     __gtype_name__ = "WeatherBox"
 
@@ -148,7 +148,7 @@ class WeatherBox(Gtk.Box):
         self.label.show()
 
 
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "list_tile.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "list_tile.glade"))
 class ListTile(Gtk.Box):
     __gtype_name__ = 'ListTile'
 

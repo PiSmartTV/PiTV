@@ -3,9 +3,10 @@ SettingsView, SettingsRow template for PiTV, depends on settings_view.glade
 TODO: Make this file better coded, add comments, fix issues
 This file is the worst
 """
-from config import ROOT_DIR
 import os
 import json
+
+from ..config import ROOT_DIR
 
 import gi
 gi.require_version("Gtk", "3.0")
@@ -13,12 +14,12 @@ from gi.repository import Gtk  # NOQA
 
 
 def load_settings(filepath):
-	with open(filepath, "r") as file:
-		raw_json = file.read()
-	return json.loads(raw_json)["settings"]
+    with open(filepath, "r") as file:
+        raw_json = file.read()
+    return json.loads(raw_json)["settings"]
 
 
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "settings_view.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui",  "settings_view.glade"))
 class SettingsView(Gtk.Box):
     __gtype_name__ = 'SettingsView'
 

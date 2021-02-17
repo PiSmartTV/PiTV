@@ -1,6 +1,6 @@
 """Category and ImageTile template, depends on category.glade, image_tile.glade."""
-from .utils import cache_file, is_cached
-from .config import ROOT_DIR
+from ..utils import cache_file, is_cached
+from ..config import ROOT_DIR
 from threading import Thread
 import os
 import re
@@ -10,8 +10,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, GdkPixbuf, GLib  # NOQA
 
-
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "image_tile.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "image_tile.glade"))
 class ImageTile(Gtk.Button):
     __gtype_name__ = "ImageTile"
 
@@ -29,7 +28,7 @@ class ImageTile(Gtk.Button):
         self.image.set_from_file(self.image_location)
 
 
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "category.glade"))
+@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "category.glade"))
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
 
