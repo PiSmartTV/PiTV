@@ -1,6 +1,7 @@
 """Category and ImageTile template, depends on category.glade, image_tile.glade."""
 from ..utils import cache_file, is_cached
 from ..config import ROOT_DIR
+from .imagetile import ImageTile
 from threading import Thread
 import os
 import re
@@ -8,26 +9,7 @@ import re
 import imdb
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, Gio, GdkPixbuf, GLib  # NOQA
-
-@Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "image_tile.glade"))
-class ImageTile(Gtk.Button):
-    __gtype_name__ = "ImageTile"
-
-    name = ""
-    image_location = ""
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-        # TODO: Fix this line
-        self.image, self.label = self.get_children()[0].get_children()
-
-    def draw(self):
-        self.label.set_label(self.name)
-        self.image.set_from_file(self.image_location)
-
-
+from gi.repository import Gtk
 @Gtk.Template(filename=os.path.join(ROOT_DIR, "ui", "category.glade"))
 class Category(Gtk.Box):
     __gtype_name__ = 'Category'
@@ -89,10 +71,11 @@ class Category(Gtk.Box):
 
         for i, img_tile in enumerate(self.tiles):
             movie = self.fetched_data[i]
-            try:
-                self._update_imagetile(img_tile, movie)
-            except:
-                continue
+            # try:
+            self._update_imagetile(img_tile, movie)
+            # except Exception as e:
+                # print(e)
+                # continue
             #GLib.idle_add(self.update_imagetile, img_tile, movie)
 
     def fetch_data(self):
