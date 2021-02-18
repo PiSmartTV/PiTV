@@ -2,7 +2,7 @@ import html
 
 import gi
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk
+from gi.repository import Gtk, Pango
 
 class ImageTile(Gtk.Button):
     __gtype_name__ = "ImageTile"
@@ -17,6 +17,7 @@ class ImageTile(Gtk.Button):
 
         # Title of the image tile
         self._label = Gtk.Label()
+        self._label.set_ellipsize(Pango.EllipsizeMode.END)
 
         # Image of the image tile
         self._image = Gtk.Image.new_from_icon_name("image-loading", 6)
