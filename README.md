@@ -1,6 +1,11 @@
 # PiTV
 New version of SmartTV. Better code, faster, optimized.
 
+## Help needed!
+- Video widget instead of celluloid
+- Rewrite templates into python classes
+- Settings and plugin system
+
 ## Installation
 It is advised to use numix circle icon theme and [official theme](https://github.com/PiSmartTV/Canta-theme).
 
@@ -49,3 +54,4 @@ grep "TODO" -rnw .
 ```
 
 And fix what is wrong!
+
