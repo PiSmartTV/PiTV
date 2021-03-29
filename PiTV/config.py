@@ -12,6 +12,8 @@ screen = Gdk.Screen.get_default()
 
 ROOT_DIR = path.dirname(path.abspath(__file__))
 HOST = "http://127.0.0.1:8000" # Again, we are looking for hosting
+STREAM_PORT = "23000"
+VIDEO_PLAYER = "/usr/bin/celluloid"
 HOME_DIR = str(Path.home())
 CONFIG_DIR = path.join(HOME_DIR, ".config", "PiTV")
 CACHE_DIR = path.join(HOME_DIR, ".cache", "PiTV")

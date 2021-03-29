@@ -9,8 +9,13 @@ def getHostname():
 
 
 # Returns local IP address
-def getLocalIP():
-    return socket.gethostbyname(socket.gethostname())
+def getLocalIP(lookup="8.8.8.8", port=80) -> str:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect((lookup, port))
+    ip = s.getsockname()[0]
+    s.close()
+
+    return ip
 
 
 class Location:

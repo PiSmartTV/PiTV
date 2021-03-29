@@ -5,6 +5,7 @@ Main PiTV file, run this
 from threading import Thread
 import sys
 import os
+import subprocess
 import json
 import pickle
 import time
@@ -16,7 +17,7 @@ from imdb import IMDb
 from .widgets.category import Category
 from .widgets.sidebar import SideBar, WeatherBox
 from .utils import check_internet, rel_path
-from .location import Location
+from .location import Location, getLocalIP
 from .weather import Weather
 from .config import *
 from . import ftp_server
@@ -44,6 +45,7 @@ CODE_EXPIRE = 60
 SIDEBAR_LABELS = [
     "Home",
     "Movies",
+    "Stream",
     # "TV Shows",
     # "TV",
     # "Songs"
@@ -53,6 +55,7 @@ SIDEBAR_LABELS = [
 SIDEBAR_ICONS = [
     "go-home",
     "media-tape",
+    "",
     # "TV Shows",
     # "TV",
     # "Songs"
@@ -156,6 +159,28 @@ class PiTV(Gtk.Application):
         self.category_view = self.builder.get_object("category_view")
         self.home_trending_scroll_view = self.builder.get_object(
             "home_trending_scroll_view")
+
+        # Video stream
+        self.home_stream_ip_label = self.builder.get_object(
+            "home_stream_ip_label")
+        self.home_stream_stack = self.builder.get_object("home_stream_stack")
+
+        # Set stream label text to IP
+        # TODO: check if network is available
+        self.ip = getLocalIP()
+        self.home_stream_ip_label.set_label(self.ip)
+
+        # TODO: Replace this with video widget
+        subprocess.Popen([VIDEO_PLAYER, f"udp://{self.ip}:{STREAM_PORT}"])
+
+        # # Video stream drawing area
+        # self.home_stream_video = VideoWidget(f"udp://{self.ip}:{STREAM_PORT}")
+        # self.home_stream_video.set_hexpand(True)
+        # self.home_stream_video.set_vexpand(True)
+        # os.system(f"{VIDEO_PLAYER} udp://{self.ip}:{STREAM_PORT}")
+
+        # self.home_stream_stack.add_titled(self.home_stream_video, "page1", "page1")
+        # self.home_stream_stack.set_visible_child_name("page1")
 
         # Scrolling adjustment
         self.category_view.set_focus_vadjustment(
